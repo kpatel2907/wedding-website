@@ -178,11 +178,50 @@
         }
         
         .rsvp-code {
-            font-family: monospace;
-            background: var(--bg-dark);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.85rem;
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 2px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        .rsvp-code:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(184, 134, 11, 0.4);
+        }
+        
+        .rsvp-code .copy-icon {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        .copy-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--color-success);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .copy-toast.show {
+            opacity: 1;
+            transform: translateY(0);
         }
         
         .status-badge {
@@ -313,7 +352,7 @@
                         {% for guest in guests %}
                         <tr>
                             <td class="guest-name">{{ guest.name }}</td>
-                            <td><span class="rsvp-code">{{ guest.rsvp_code }}</span></td>
+                            <td><span class="rsvp-code" onclick="copyCode('{{ guest.rsvp_code }}')" title="Click to copy">{{ guest.rsvp_code }} <span class="copy-icon">📋</span></span></td>
                             <td>{{ guest.email|default:"-" }}</td>
                             <td class="guest-count">{{ guest.max_guests }}</td>
                             <td>
@@ -374,6 +413,18 @@
             </div>
         </div>
     </div>
+    
+    <div id="copyToast" class="copy-toast">✓ Code copied to clipboard!</div>
+    
+    <script>
+        function copyCode(code) {
+            navigator.clipboard.writeText(code).then(function() {
+                const toast = document.getElementById('copyToast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+            });
+        }
+    </script>
 </body>
 </html>
 

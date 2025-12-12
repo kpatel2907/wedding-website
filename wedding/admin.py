@@ -70,10 +70,11 @@ class GuestAdmin(admin.ModelAdmin):
     
     def rsvp_code_display(self, obj):
         return format_html(
-            '<code style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">{}</code>',
+            '<code style="background: linear-gradient(135deg, #b8860b, #d4a853); color: white; padding: 8px 14px; border-radius: 6px; font-size: 14px; font-weight: bold; letter-spacing: 2px; display: inline-block;">{}</code>',
             obj.rsvp_code
         )
     rsvp_code_display.short_description = 'RSVP Code'
+    rsvp_code_display.admin_order_field = 'rsvp_code'
     
     def party_size(self, obj):
         return obj.max_guests
