@@ -505,11 +505,7 @@
                 
                 {% if guest.party_name %}
                 <div class="party-info">
-                    <span>{{ guest.party_name }}</span> • Up to {{ guest.max_guests }} guest{{ guest.max_guests|pluralize }}
-                </div>
-                {% else %}
-                <div class="party-info">
-                    Up to <span>{{ guest.max_guests }}</span> guest{{ guest.max_guests|pluralize }}
+                    <span>{{ guest.party_name }}</span>
                 </div>
                 {% endif %}
             </div>
@@ -552,9 +548,9 @@
                                     </label>
                                 </div>
                                 <div class="guest-count-section">
-                                    <label>Number of guests attending (max {{ guest.max_guests }}):</label>
+                                    <label>Number of guests attending:</label>
                                     <input type="number" name="guests_mendhi" class="guest-count-input" 
-                                           value="{{ guest.guests_mendhi|default:1 }}" min="0" max="{{ guest.max_guests }}">
+                                           value="{{ guest.guests_mendhi|default:1 }}" min="0" max="99">
                                 </div>
                             </div>
                         </div>
@@ -585,9 +581,9 @@
                                     </label>
                                 </div>
                                 <div class="guest-count-section">
-                                    <label>Number of guests attending (max {{ guest.max_guests }}):</label>
+                                    <label>Number of guests attending:</label>
                                     <input type="number" name="guests_vidhi" class="guest-count-input" 
-                                           value="{{ guest.guests_vidhi|default:1 }}" min="0" max="{{ guest.max_guests }}">
+                                           value="{{ guest.guests_vidhi|default:1 }}" min="0" max="99">
                                 </div>
                             </div>
                         </div>
@@ -618,9 +614,9 @@
                                     </label>
                                 </div>
                                 <div class="guest-count-section">
-                                    <label>Number of guests attending (max {{ guest.max_guests }}):</label>
+                                    <label>Number of guests attending:</label>
                                     <input type="number" name="guests_wedding" class="guest-count-input" 
-                                           value="{{ guest.guests_wedding|default:1 }}" min="0" max="{{ guest.max_guests }}">
+                                           value="{{ guest.guests_wedding|default:1 }}" min="0" max="99">
                                 </div>
                             </div>
                         </div>
@@ -651,9 +647,9 @@
                                     </label>
                                 </div>
                                 <div class="guest-count-section">
-                                    <label>Number of guests attending (max {{ guest.max_guests }}):</label>
+                                    <label>Number of guests attending:</label>
                                     <input type="number" name="guests_reception" class="guest-count-input" 
-                                           value="{{ guest.guests_reception|default:1 }}" min="0" max="{{ guest.max_guests }}">
+                                           value="{{ guest.guests_reception|default:1 }}" min="0" max="99">
                                 </div>
                             </div>
                         </div>
