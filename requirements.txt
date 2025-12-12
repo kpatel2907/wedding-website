@@ -1,0 +1,18 @@
+# Django and core
+Django==5.2.6
+gunicorn==21.2.0
+whitenoise==6.6.0
+
+# Database
+psycopg==3.2.10
+psycopg-binary==3.2.10
+dj-database-url==2.1.0
+
+# Environment
+python-dotenv==1.0.0
+
+# Other dependencies from original requirements
+anyio==4.11.0
+asgiref==3.9.2
+certifi==2025.10.5
+

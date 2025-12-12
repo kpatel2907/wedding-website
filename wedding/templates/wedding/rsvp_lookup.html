@@ -1,0 +1,238 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSVP | Wedding Celebration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        .rsvp-lookup-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--color-cream) 0%, var(--color-secondary) 50%, var(--color-blush) 100%);
+            padding: 20px;
+        }
+        
+        .rsvp-lookup-container {
+            background: var(--color-white);
+            padding: 60px 50px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-medium);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .rsvp-lookup-container h1 {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            font-weight: 400;
+            color: var(--color-text);
+            margin-bottom: 10px;
+        }
+        
+        .rsvp-lookup-container .subtitle {
+            color: var(--color-text-light);
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+        
+        .code-form {
+            margin-top: 30px;
+        }
+        
+        .code-form label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .rsvp-code-input {
+            width: 100%;
+            padding: 20px;
+            font-family: var(--font-body);
+            font-size: 1.5rem !important;
+            border: 2px solid var(--color-secondary);
+            border-radius: 10px;
+            text-align: center;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            transition: var(--transition-smooth);
+            box-sizing: border-box;
+        }
+        
+        .rsvp-code-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 4px rgba(184, 134, 11, 0.1);
+        }
+        
+        .code-form .help-text {
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+            margin-top: 10px;
+        }
+        
+        .code-form .error-message {
+            color: #d32f2f;
+            background: #ffebee;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .lookup-btn {
+            width: 100%;
+            padding: 18px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-white);
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            margin-top: 25px;
+        }
+        
+        .lookup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(184, 134, 11, 0.3);
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: var(--color-primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition-smooth);
+        }
+        
+        .back-link:hover {
+            color: var(--color-primary-dark);
+        }
+        
+        .decorative-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 600px) {
+            .rsvp-lookup-container {
+                padding: 40px 25px;
+                border-radius: 15px;
+                margin: 10px;
+            }
+            
+            .rsvp-lookup-container h1 {
+                font-size: 2rem;
+            }
+            
+            .rsvp-lookup-container .subtitle {
+                font-size: 1rem;
+                margin-bottom: 30px;
+            }
+            
+            .rsvp-code-input {
+                padding: 15px;
+                font-size: 1.2rem !important;
+                letter-spacing: 3px;
+            }
+            
+            .lookup-btn {
+                padding: 15px;
+                font-size: 0.9rem;
+            }
+            
+            .decorative-icon {
+                font-size: 2.5rem;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .rsvp-lookup-container {
+                padding: 30px 20px;
+            }
+            
+            .rsvp-lookup-container h1 {
+                font-size: 1.7rem;
+            }
+            
+            .rsvp-code-input {
+                font-size: 1rem !important;
+                letter-spacing: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="rsvp-lookup-page">
+        <div class="rsvp-lookup-container">
+            <div class="decorative-icon">💌</div>
+            <h1>RSVP</h1>
+            <p class="subtitle">Enter your unique invitation code</p>
+            
+            <div class="header-divider" style="margin-bottom: 30px;">
+                <span class="divider-line"></span>
+                <span class="divider-icon">♥</span>
+                <span class="divider-line"></span>
+            </div>
+            
+            <form method="post" class="code-form">
+                {% csrf_token %}
+                <label for="id_rsvp_code">Your RSVP Code</label>
+                <input type="text" 
+                       name="rsvp_code" 
+                       id="id_rsvp_code" 
+                       class="rsvp-code-input" 
+                       placeholder="XXXXXXXX"
+                       maxlength="8"
+                       autocomplete="off"
+                       autofocus
+                       required>
+                <p class="help-text">Find your 8-character code on your invitation</p>
+                
+                {% if form.errors %}
+                <div class="error-message">
+                    {{ form.rsvp_code.errors.0 }}
+                </div>
+                {% endif %}
+                
+                <button type="submit" class="lookup-btn">Find My Invitation</button>
+            </form>
+            
+            <div style="margin-top: 25px; padding-top: 25px; border-top: 1px solid var(--color-secondary);">
+                <p style="color: var(--color-text-light); font-size: 0.9rem; margin-bottom: 10px;">Can't find your code?</p>
+                <a href="{% url 'wedding:forgot_code' %}" style="color: var(--color-primary); font-weight: 500; text-decoration: none;">
+                    🔑 Send code to my email
+                </a>
+            </div>
+            
+            <a href="{% url 'wedding:home' %}" class="back-link">← Back to Home</a>
+        </div>
+    </div>
+    
+    <script>
+        // Auto-uppercase the input
+        document.getElementById('id_rsvp_code').addEventListener('input', function(e) {
+            e.target.value = e.target.value.toUpperCase();
+        });
+    </script>
+</body>
+</html>
+

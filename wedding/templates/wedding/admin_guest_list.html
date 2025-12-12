@@ -1,0 +1,379 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guest List | Wedding Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #b8860b;
+            --color-primary-light: #d4a853;
+            --color-success: #4caf50;
+            --color-warning: #ff9800;
+            --color-danger: #f44336;
+            --color-info: #2196f3;
+            --bg-dark: #1a1a2e;
+            --bg-card: #16213e;
+            --bg-card-hover: #1f2b47;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --border-color: #2a2a4a;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        
+        .container {
+            padding: 30px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+        }
+        
+        .btn-primary {
+            background: var(--color-primary);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn:hover {
+            background: var(--bg-card-hover);
+        }
+        
+        /* Filters */
+        .filters {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            border: 1px solid var(--border-color);
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .filter-group label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .filter-group select,
+        .filter-group input {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+        
+        .results-count {
+            margin-left: auto;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Table */
+        .table-container {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+        
+        .table-scroll {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1200px;
+        }
+        
+        th {
+            background: var(--bg-dark);
+            padding: 15px;
+            text-align: left;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+        
+        tr:hover td {
+            background: var(--bg-card-hover);
+        }
+        
+        .guest-name {
+            font-weight: 500;
+        }
+        
+        .rsvp-code {
+            font-family: monospace;
+            background: var(--bg-dark);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .status-badge.attending {
+            background: rgba(76, 175, 80, 0.2);
+            color: var(--color-success);
+        }
+        
+        .status-badge.not-attending {
+            background: rgba(244, 67, 54, 0.2);
+            color: var(--color-danger);
+        }
+        
+        .status-badge.pending {
+            background: rgba(255, 152, 0, 0.2);
+            color: var(--color-warning);
+        }
+        
+        .status-badge.responded {
+            background: rgba(33, 150, 243, 0.2);
+            color: var(--color-info);
+        }
+        
+        .invited-events {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .event-tag {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: var(--bg-dark);
+        }
+        
+        .event-tag.invited {
+            background: rgba(184, 134, 11, 0.2);
+            color: var(--color-primary-light);
+        }
+        
+        .guest-count {
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .empty-state {
+            padding: 60px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            .filters { flex-direction: column; align-items: stretch; }
+            .results-count { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👥 Guest List</h1>
+            <div class="header-actions">
+                <a href="{% url 'wedding:admin_dashboard' %}" class="btn btn-outline">📊 Dashboard</a>
+                <a href="{% url 'wedding:export_guests_csv' %}" class="btn btn-outline">📥 Export CSV</a>
+                <a href="{% url 'admin:wedding_guest_changelist' %}" class="btn btn-primary">➕ Add Guest</a>
+            </div>
+        </div>
+        
+        <form method="get" class="filters">
+            <div class="filter-group">
+                <label>Event:</label>
+                <select name="event" onchange="this.form.submit()">
+                    <option value="">All Events</option>
+                    <option value="mendhi" {% if event_filter == 'mendhi' %}selected{% endif %}>Mendhi</option>
+                    <option value="vidhi" {% if event_filter == 'vidhi' %}selected{% endif %}>Vidhi</option>
+                    <option value="wedding" {% if event_filter == 'wedding' %}selected{% endif %}>Wedding</option>
+                    <option value="reception" {% if event_filter == 'reception' %}selected{% endif %}>Reception</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label>Status:</label>
+                <select name="status" onchange="this.form.submit()">
+                    <option value="">All Statuses</option>
+                    <option value="responded" {% if status_filter == 'responded' %}selected{% endif %}>Responded</option>
+                    <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="attending" {% if status_filter == 'attending' %}selected{% endif %}>Attending (any event)</option>
+                    <option value="not_attending" {% if status_filter == 'not_attending' %}selected{% endif %}>Declined (any event)</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label>Search:</label>
+                <input type="text" name="search" value="{{ search }}" placeholder="Name, email, or code">
+                <button type="submit" class="btn btn-outline">Search</button>
+            </div>
+            
+            <span class="results-count">{{ total_count }} guest{{ total_count|pluralize }}</span>
+        </form>
+        
+        <div class="table-container">
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>RSVP Code</th>
+                            <th>Email</th>
+                            <th>Party Size</th>
+                            <th>Invited To</th>
+                            <th>Mendhi</th>
+                            <th>Vidhi</th>
+                            <th>Wedding</th>
+                            <th>Reception</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for guest in guests %}
+                        <tr>
+                            <td class="guest-name">{{ guest.name }}</td>
+                            <td><span class="rsvp-code">{{ guest.rsvp_code }}</span></td>
+                            <td>{{ guest.email|default:"-" }}</td>
+                            <td class="guest-count">{{ guest.max_guests }}</td>
+                            <td>
+                                <div class="invited-events">
+                                    {% if guest.invited_mendhi %}<span class="event-tag invited">M</span>{% endif %}
+                                    {% if guest.invited_vidhi %}<span class="event-tag invited">V</span>{% endif %}
+                                    {% if guest.invited_wedding %}<span class="event-tag invited">W</span>{% endif %}
+                                    {% if guest.invited_reception %}<span class="event-tag invited">R</span>{% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                {% if guest.invited_mendhi %}
+                                    <span class="status-badge {{ guest.rsvp_mendhi }}">
+                                        {{ guest.rsvp_mendhi }}{% if guest.rsvp_mendhi == 'attending' %} ({{ guest.guests_mendhi }}){% endif %}
+                                    </span>
+                                {% else %}-{% endif %}
+                            </td>
+                            <td>
+                                {% if guest.invited_vidhi %}
+                                    <span class="status-badge {{ guest.rsvp_vidhi }}">
+                                        {{ guest.rsvp_vidhi }}{% if guest.rsvp_vidhi == 'attending' %} ({{ guest.guests_vidhi }}){% endif %}
+                                    </span>
+                                {% else %}-{% endif %}
+                            </td>
+                            <td>
+                                {% if guest.invited_wedding %}
+                                    <span class="status-badge {{ guest.rsvp_wedding }}">
+                                        {{ guest.rsvp_wedding }}{% if guest.rsvp_wedding == 'attending' %} ({{ guest.guests_wedding }}){% endif %}
+                                    </span>
+                                {% else %}-{% endif %}
+                            </td>
+                            <td>
+                                {% if guest.invited_reception %}
+                                    <span class="status-badge {{ guest.rsvp_reception }}">
+                                        {{ guest.rsvp_reception }}{% if guest.rsvp_reception == 'attending' %} ({{ guest.guests_reception }}){% endif %}
+                                    </span>
+                                {% else %}-{% endif %}
+                            </td>
+                            <td>
+                                {% if guest.has_responded %}
+                                    <span class="status-badge responded">Responded</span>
+                                {% else %}
+                                    <span class="status-badge pending">Pending</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="10">
+                                <div class="empty-state">
+                                    <p>No guests found matching your criteria.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

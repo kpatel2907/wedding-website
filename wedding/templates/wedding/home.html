@@ -1,0 +1,194 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Celebration | Together Forever</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="header">
+        <nav class="nav">
+            <ul class="nav-list">
+                <li><a href="#welcome" class="nav-link active" data-page="welcome">Welcome</a></li>
+                <li><a href="#our-story" class="nav-link" data-page="our-story">Our Story</a></li>
+                <li><a href="#events" class="nav-link" data-page="events">Events</a></li>
+                <li><a href="{% url 'wedding:rsvp_lookup' %}" class="nav-link">RSVP</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Welcome Page -->
+        <section id="welcome" class="page welcome-page active">
+            <div class="hero">
+                <div class="hero-content">
+                    <p class="hero-subtitle">Together with their families</p>
+                    <h1 class="hero-title">
+                        {% if wedding_info.partner1_name %}
+                            <span class="name">{{ wedding_info.partner1_name }}</span>
+                        {% else %}
+                            <span class="name">Prit</span>
+                        {% endif %}
+                        <span class="ampersand">&</span>
+                        {% if wedding_info.partner2_name %}
+                            <span class="name">{{ wedding_info.partner2_name }}</span>
+                        {% else %}
+                            <span class="name">Khushboo</span>
+                        {% endif %}
+                    </h1>
+                    <div class="hero-divider">
+                        <span class="divider-line"></span>
+                        <span class="divider-icon">♥</span>
+                        <span class="divider-line"></span>
+                    </div>
+                    {% if wedding_info.wedding_date %}
+                        <p class="hero-date">{{ wedding_info.wedding_date|date:"F j, Y" }}</p>
+                    {% else %}
+                        <p class="hero-date">December 28, 2025</p>
+                    {% endif %}
+                    {% if wedding_info.location %}
+                        <p class="hero-location">{{ wedding_info.location }}</p>
+                    {% else %}
+                        <p class="hero-location">Mumbai, India</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="welcome-message">
+                <div class="container">
+                    {% if wedding_info.welcome_title %}
+                        <h2>{{ wedding_info.welcome_title }}</h2>
+                    {% else %}
+                        <h2>Welcome to Our Wedding</h2>
+                    {% endif %}
+                    {% if wedding_info.welcome_message %}
+                        <p>{{ wedding_info.welcome_message }}</p>
+                    {% else %}
+                        <p>We are so excited to celebrate our special day with you! Join us for a beautiful celebration of love, laughter, and happily ever after.</p>
+                    {% endif %}
+                    <p>Scroll through our website to learn more about our journey and the events.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Story Page -->
+        <section id="our-story" class="page story-page">
+            <div class="page-header">
+                <h1>Our Story</h1>
+                <div class="header-divider">
+                    <span class="divider-line"></span>
+                    <span class="divider-icon">♥</span>
+                    <span class="divider-line"></span>
+                </div>
+            </div>
+            <div class="container">
+                <div class="story-timeline">
+                    {% for milestone in milestones %}
+                    <div class="timeline-item">
+                        <div class="timeline-date">{{ milestone.year }}</div>
+                        <div class="timeline-content">
+                            <h3>{{ milestone.title }}</h3>
+                            <p>{{ milestone.description }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Events Page -->
+        <section id="events" class="page events-page">
+            <div class="page-header">
+                <h1>Wedding Events</h1>
+                <div class="header-divider">
+                    <span class="divider-line"></span>
+                    <span class="divider-icon">♥</span>
+                    <span class="divider-line"></span>
+                </div>
+                <p class="page-subtitle">Join us for four days of celebration</p>
+            </div>
+            <div class="container">
+                <div class="events-grid">
+                    {% for event in events %}
+                    <div class="event-card{% if event.is_featured %} featured{% endif %}">
+                        <div class="event-icon">{{ event.icon }}</div>
+                        <h3 class="event-name">{{ event.name }}</h3>
+                        <div class="event-date">
+                            {% if event.date|date %}
+                                <span class="day">{{ event.date|date:"F j, Y" }}</span>
+                            {% else %}
+                                <span class="day">{{ event.date }}</span>
+                            {% endif %}
+                            <span class="time">{{ event.time }}</span>
+                        </div>
+                        <div class="event-location">
+                            <strong>{{ event.venue_name }}</strong>
+                            <p>{{ event.venue_address }}</p>
+                        </div>
+                        <div class="event-description">
+                            <p>{{ event.description }}</p>
+                        </div>
+                        <div class="event-dress-code">
+                            <span>Dress Code:</span> {{ event.dress_code }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            {% if wedding_info.partner1_name and wedding_info.partner2_name %}
+                <p class="footer-names">{{ wedding_info.partner1_name }} & {{ wedding_info.partner2_name }}</p>
+            {% else %}
+                <p class="footer-names">Prit & Khushboo</p>
+            {% endif %}
+            {% if wedding_info.wedding_date %}
+                <p class="footer-date">{{ wedding_info.wedding_date|date:"F j, Y" }}</p>
+            {% else %}
+                <p class="footer-date">December 28, 2025</p>
+            {% endif %}
+            {% if wedding_info.hashtag %}
+                <p class="footer-hashtag">{{ wedding_info.hashtag }}</p>
+            {% else %}
+                <p class="footer-hashtag">#PritniKhushi</p>
+            {% endif %}
+        </div>
+    </footer>
+
+    <script src="{% static 'js/script.js' %}"></script>
+    
+    <style>
+        .rsvp-cta-btn {
+            display: inline-block;
+            padding: 18px 50px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: var(--color-white);
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+            border-radius: 8px;
+            margin-top: 30px;
+            transition: var(--transition-smooth);
+        }
+        
+        .rsvp-cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(184, 134, 11, 0.3);
+        }
+    </style>
+</body>
+</html>

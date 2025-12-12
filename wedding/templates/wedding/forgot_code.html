@@ -1,0 +1,188 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot RSVP Code | Wedding Celebration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        .forgot-code-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--color-cream) 0%, var(--color-secondary) 50%, var(--color-blush) 100%);
+            padding: 20px;
+        }
+        
+        .forgot-code-container {
+            background: var(--color-white);
+            padding: 60px 50px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-medium);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .forgot-code-container h1 {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            font-weight: 400;
+            color: var(--color-text);
+            margin-bottom: 10px;
+        }
+        
+        .forgot-code-container .subtitle {
+            color: var(--color-text-light);
+            margin-bottom: 30px;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .forgot-form {
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .forgot-form label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .forgot-code-input {
+            width: 100%;
+            padding: 15px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            border: 2px solid var(--color-secondary);
+            border-radius: 10px;
+            transition: var(--transition-smooth);
+        }
+        
+        .forgot-code-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 4px rgba(184, 134, 11, 0.1);
+        }
+        
+        .forgot-form .help-text {
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+            margin-top: 8px;
+        }
+        
+        .forgot-form .error-message {
+            color: #d32f2f;
+            background: #ffebee;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        
+        .send-btn {
+            width: 100%;
+            padding: 18px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-white);
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            margin-top: 25px;
+        }
+        
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(184, 134, 11, 0.3);
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: var(--color-primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition-smooth);
+        }
+        
+        .back-link:hover {
+            color: var(--color-primary-dark);
+        }
+        
+        .decorative-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border: 1px solid #90caf9;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #1565c0;
+        }
+    </style>
+</head>
+<body>
+    <div class="forgot-code-page">
+        <div class="forgot-code-container">
+            <div class="decorative-icon">🔑</div>
+            <h1>Forgot Your Code?</h1>
+            <p class="subtitle">No worries! Enter your email address and we'll send your RSVP code right away.</p>
+            
+            <div class="header-divider" style="margin-bottom: 20px;">
+                <span class="divider-line"></span>
+                <span class="divider-icon">♥</span>
+                <span class="divider-line"></span>
+            </div>
+            
+            <form method="post" class="forgot-form">
+                {% csrf_token %}
+                <label for="id_email">Email Address</label>
+                <input type="email" 
+                       name="email" 
+                       id="id_email" 
+                       class="forgot-code-input" 
+                       placeholder="Enter your email address"
+                       autocomplete="email"
+                       autofocus
+                       required>
+                <p class="help-text">Use the same email from your invitation</p>
+                
+                {% if form.errors %}
+                <div class="error-message">
+                    {{ form.email.errors.0 }}
+                </div>
+                {% endif %}
+                
+                <button type="submit" class="send-btn">Send My Code</button>
+            </form>
+            
+            <div class="info-box">
+                💡 <strong>Tip:</strong> Check your spam folder if you don't see the email within a few minutes.
+            </div>
+            
+            <a href="{% url 'wedding:rsvp_lookup' %}" class="back-link">← Back to RSVP</a>
+        </div>
+    </div>
+</body>
+</html>
+

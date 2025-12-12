@@ -1,0 +1,10 @@
+name,email,phone,party_name,max_guests,invited_mendhi,invited_vidhi,invited_wedding,invited_reception
+"Sharma Family","sharma@email.com","9876543210","The Sharma Family",4,True,True,True,True
+"Patel Family","patel@email.com","9876543211","The Patel Family",3,True,True,True,True
+"John Smith","john.smith@email.com","9876543212","",2,False,False,True,True
+"Priya Desai","priya.desai@email.com","9876543213","",1,False,False,True,True
+"The Mehta Family","mehta@email.com","9876543214","Mehta Family",5,True,True,True,True
+"Rahul Kumar","rahul.kumar@email.com","9876543215","",2,False,False,True,False
+"Anita Joshi","anita@email.com","9876543216","",1,True,False,True,True
+"Guest Name Here","email@example.com","phone_number","Party/Family Name",2,True,True,True,True
+
