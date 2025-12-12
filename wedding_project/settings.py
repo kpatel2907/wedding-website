@@ -34,17 +34,17 @@ DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 # Allowed hosts - add your deployment domain here
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
-# For Railway/Render deployment
-RAILWAY_STATIC_URL = os.getenv('RAILWAY_STATIC_URL', '')
-RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME', '')
-
-if RAILWAY_STATIC_URL:
-    ALLOWED_HOSTS.append('.railway.app')
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+# For Railway/Render deployment - automatically allow railway.app domains
+ALLOWED_HOSTS.append('.railway.app')
+ALLOWED_HOSTS.append('.up.railway.app')
 
 # CSRF Trusted Origins for production
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:8000,http://127.0.0.1:8000').split(',')
+
+# Auto-add Railway domains to CSRF trusted origins
+CSRF_TRUSTED_ORIGINS.append('https://web-production-bb822.up.railway.app')
+CSRF_TRUSTED_ORIGINS.append('https://*.railway.app')
+CSRF_TRUSTED_ORIGINS.append('https://*.up.railway.app')
 
 
 # Application definition
