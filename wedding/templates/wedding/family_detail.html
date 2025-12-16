@@ -1,0 +1,513 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ guest.party_name }} - RSVP Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #d4af37;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #f4d160;
+            transform: translateX(-5px);
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            color: #d4af37;
+            margin-bottom: 10px;
+        }
+
+        .rsvp-code {
+            display: inline-block;
+            background: linear-gradient(135deg, #d4af37, #f4d160);
+            color: #1a1a2e;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .response-status {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .response-status.responded {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .response-status.pending {
+            background: rgba(255, 152, 0, 0.2);
+            color: #ff9800;
+            border: 1px solid rgba(255, 152, 0, 0.3);
+        }
+
+        .response-time {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .section h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: #d4af37;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Family Members Grid */
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .member-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .member-card h3 {
+            font-size: 1.1rem;
+            color: #fff;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .event-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .event-status:last-child {
+            border-bottom: none;
+        }
+
+        .event-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .event-icon {
+            font-size: 1rem;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.attending {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+        }
+
+        .status-badge.not_attending {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+        }
+
+        .status-badge.pending {
+            background: rgba(255, 152, 0, 0.2);
+            color: #ff9800;
+        }
+
+        .status-badge.not-invited {
+            background: rgba(128, 128, 128, 0.2);
+            color: #888;
+        }
+
+        /* Events Summary */
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .event-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .event-card h4 {
+            font-size: 1rem;
+            color: #d4af37;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .attendance-group {
+            margin-bottom: 12px;
+        }
+
+        .attendance-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .attendance-label.attending {
+            color: #4caf50;
+        }
+
+        .attendance-label.not-attending {
+            color: #f44336;
+        }
+
+        .attendance-label.pending-label {
+            color: #ff9800;
+        }
+
+        .names-list {
+            font-size: 0.9rem;
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        .names-list.empty {
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Additional Info */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .info-item label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .info-item p {
+            color: #e0e0e0;
+            line-height: 1.5;
+        }
+
+        .info-item p.empty {
+            color: #666;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .members-grid,
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{% url 'wedding:admin_dashboard' %}" class="back-link">
+            ← Back to Dashboard
+        </a>
+
+        <div class="header">
+            <h1>{{ guest.party_name }}</h1>
+            <div class="rsvp-code">{{ guest.rsvp_code }}</div>
+            <br><br>
+            {% if guest.has_responded %}
+                <span class="response-status responded">✓ RESPONDED</span>
+                <p class="response-time">Submitted {{ guest.rsvp_submitted_at|timesince }} ago</p>
+            {% else %}
+                <span class="response-status pending">⏳ AWAITING RESPONSE</span>
+            {% endif %}
+        </div>
+
+        <!-- Family Members -->
+        <div class="section">
+            <h2>👨‍👩‍👧‍👦 Family Members ({{ family_members.count }})</h2>
+            <div class="members-grid">
+                {% for member in family_members %}
+                <div class="member-card">
+                    <h3>{{ member.name }}</h3>
+                    
+                    {% if member.invited_mendhi %}
+                    <div class="event-status">
+                        <span class="event-name"><span class="event-icon">✿</span> Mendhi</span>
+                        <span class="status-badge {{ member.rsvp_mendhi }}">
+                            {% if member.rsvp_mendhi == 'attending' %}Attending
+                            {% elif member.rsvp_mendhi == 'not_attending' %}Not Attending
+                            {% else %}Pending{% endif %}
+                        </span>
+                    </div>
+                    {% endif %}
+
+                    {% if member.invited_vidhi %}
+                    <div class="event-status">
+                        <span class="event-name"><span class="event-icon">🪔</span> Vidhi</span>
+                        <span class="status-badge {{ member.rsvp_vidhi }}">
+                            {% if member.rsvp_vidhi == 'attending' %}Attending
+                            {% elif member.rsvp_vidhi == 'not_attending' %}Not Attending
+                            {% else %}Pending{% endif %}
+                        </span>
+                    </div>
+                    {% endif %}
+
+                    {% if member.invited_wedding %}
+                    <div class="event-status">
+                        <span class="event-name"><span class="event-icon">🛕</span> Wedding</span>
+                        <span class="status-badge {{ member.rsvp_wedding }}">
+                            {% if member.rsvp_wedding == 'attending' %}Attending
+                            {% elif member.rsvp_wedding == 'not_attending' %}Not Attending
+                            {% else %}Pending{% endif %}
+                        </span>
+                    </div>
+                    {% endif %}
+
+                    {% if member.invited_reception %}
+                    <div class="event-status">
+                        <span class="event-name"><span class="event-icon">🎉</span> Reception</span>
+                        <span class="status-badge {{ member.rsvp_reception }}">
+                            {% if member.rsvp_reception == 'attending' %}Attending
+                            {% elif member.rsvp_reception == 'not_attending' %}Not Attending
+                            {% else %}Pending{% endif %}
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Events Summary -->
+        <div class="section">
+            <h2>📊 Events Summary</h2>
+            <div class="events-grid">
+                <!-- Mendhi -->
+                <div class="event-card">
+                    <h4><span class="event-icon">✿</span> Mendhi</h4>
+                    {% if events_summary.mendhi.attending or events_summary.mendhi.not_attending or events_summary.mendhi.pending %}
+                        {% if events_summary.mendhi.attending %}
+                        <div class="attendance-group">
+                            <div class="attendance-label attending">✓ Attending ({{ events_summary.mendhi.attending|length }})</div>
+                            <div class="names-list">{{ events_summary.mendhi.attending|join:", " }}</div>
+                        </div>
+                        {% endif %}
+                        {% if events_summary.mendhi.not_attending %}
+                        <div class="attendance-group">
+                            <div class="attendance-label not-attending">✗ Not Attending ({{ events_summary.mendhi.not_attending|length }})</div>
+                            <div class="names-list">{{ events_summary.mendhi.not_attending|join:", " }}</div>
+                        </div>
+                        {% endif %}
+                        {% if events_summary.mendhi.pending %}
+                        <div class="attendance-group">
+                            <div class="attendance-label pending-label">⏳ Pending ({{ events_summary.mendhi.pending|length }})</div>
+                            <div class="names-list">{{ events_summary.mendhi.pending|join:", " }}</div>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="names-list empty">No one invited to this event</div>
+                    {% endif %}
+                </div>
+
+                <!-- Vidhi -->
+                <div class="event-card">
+                    <h4><span class="event-icon">🪔</span> Vidhi</h4>
+                    {% if events_summary.vidhi.attending or events_summary.vidhi.not_attending or events_summary.vidhi.pending %}
+                        {% if events_summary.vidhi.attending %}
+                        <div class="attendance-group">
+                            <div class="attendance-label attending">✓ Attending ({{ events_summary.vidhi.attending|length }})</div>
+                            <div class="names-list">{{ events_summary.vidhi.attending|join:", " }}</div>
+                        </div>
+                        {% endif %}
+                        {% if events_summary.vidhi.not_attending %}
+                        <div class="attendance-group">
+                            <div class="attendance-label not-attending">✗ Not Attending ({{ events_summary.vidhi.not_attending|length }})</div>
+                            <div class="names-list">{{ events_summary.vidhi.not_attending|join:", " }}</div>
+                        </div>
+                        {% endif %}
+                        {% if events_summary.vidhi.pending %}
+                        <div class="attendance-group">
+                            <div class="attendance-label pending-label">⏳ Pending ({{ events_summary.vidhi.pending|length }})</div>
+                            <div class="names-list">{{ events_summary.vidhi.pending|join:", " }}</div>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="names-list empty">No one invited to this event</div>
+                    {% endif %}
+                </div>
+
+                <!-- Wedding -->
+                <div class="event-card">
+                    <h4><span class="event-icon">🛕</span> Wedding</h4>
+                    {% if events_summary.wedding.attending or events_summary.wedding.not_attending or events_summary.wedding.pending %}
+                        {% if events_summary.wedding.attending %}
+                        <div class="attendance-group">
+                            <div class="attendance-label attending">✓ Attending ({{ events_summary.wedding.attending|length }})</div>
+                            <div class="names-list">{{ events_summary.wedding.attending|join:", " }}</div>
+                        </div>
+                        {% endif %}
+                        {% if events_summary.wedding.not_attending %}
+                        <div class="attendance-group">
+                            <div class="attendance-label not-attending">✗ Not Attending ({{ events_summary.wedding.not_attending|length }})</div>
+                            <div class="names-list">{{ events_summary.wedding.not_attending|join:", " }}</div>
+                        </div>
+                        {% endif %}
+                        {% if events_summary.wedding.pending %}
+                        <div class="attendance-group">
+                            <div class="attendance-label pending-label">⏳ Pending ({{ events_summary.wedding.pending|length }})</div>
+                            <div class="names-list">{{ events_summary.wedding.pending|join:", " }}</div>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="names-list empty">No one invited to this event</div>
+                    {% endif %}
+                </div>
+
+                <!-- Reception -->
+                <div class="event-card">
+                    <h4><span class="event-icon">🎉</span> Reception</h4>
+                    {% if events_summary.reception.attending or events_summary.reception.not_attending or events_summary.reception.pending %}
+                        {% if events_summary.reception.attending %}
+                        <div class="attendance-group">
+                            <div class="attendance-label attending">✓ Attending ({{ events_summary.reception.attending|length }})</div>
+                            <div class="names-list">{{ events_summary.reception.attending|join:", " }}</div>
+                        </div>
+                        {% endif %}
+                        {% if events_summary.reception.not_attending %}
+                        <div class="attendance-group">
+                            <div class="attendance-label not-attending">✗ Not Attending ({{ events_summary.reception.not_attending|length }})</div>
+                            <div class="names-list">{{ events_summary.reception.not_attending|join:", " }}</div>
+                        </div>
+                        {% endif %}
+                        {% if events_summary.reception.pending %}
+                        <div class="attendance-group">
+                            <div class="attendance-label pending-label">⏳ Pending ({{ events_summary.reception.pending|length }})</div>
+                            <div class="names-list">{{ events_summary.reception.pending|join:", " }}</div>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="names-list empty">No one invited to this event</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Info -->
+        {% if guest.dietary_requirements or guest.message or guest.email or guest.phone %}
+        <div class="section">
+            <h2>📝 Additional Information</h2>
+            <div class="info-grid">
+                {% if guest.email %}
+                <div class="info-item">
+                    <label>Email</label>
+                    <p>{{ guest.email }}</p>
+                </div>
+                {% endif %}
+                {% if guest.phone %}
+                <div class="info-item">
+                    <label>Phone</label>
+                    <p>{{ guest.phone }}</p>
+                </div>
+                {% endif %}
+                {% if guest.dietary_requirements %}
+                <div class="info-item">
+                    <label>Dietary Requirements</label>
+                    <p>{{ guest.dietary_requirements }}</p>
+                </div>
+                {% endif %}
+                {% if guest.message %}
+                <div class="info-item">
+                    <label>Message</label>
+                    <p>{{ guest.message }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
+

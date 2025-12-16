@@ -14,6 +14,7 @@ urlpatterns = [
     # Admin dashboard
     path('dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('dashboard/guests/', views.admin_guest_list, name='admin_guest_list'),
+    path('dashboard/family/<str:rsvp_code>/', views.family_detail, name='family_detail'),
     path('dashboard/export/', views.export_guests_csv, name='export_guests_csv'),
     path('api/dashboard/stats/', views.api_dashboard_stats, name='api_dashboard_stats'),
 ]

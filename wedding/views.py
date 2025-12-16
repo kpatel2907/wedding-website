@@ -379,6 +379,38 @@ def admin_dashboard(request):
 
 
 @staff_member_required
+def family_detail(request, rsvp_code):
+    """View detailed RSVP status for a specific family"""
+    guest = get_object_or_404(Guest, rsvp_code=rsvp_code.upper())
+    family_members = guest.family_members.all()
+    
+    # Organize members by their RSVP status for each event
+    events_summary = {
+        'mendhi': {'attending': [], 'not_attending': [], 'pending': []},
+        'vidhi': {'attending': [], 'not_attending': [], 'pending': []},
+        'wedding': {'attending': [], 'not_attending': [], 'pending': []},
+        'reception': {'attending': [], 'not_attending': [], 'pending': []},
+    }
+    
+    for member in family_members:
+        if member.invited_mendhi:
+            events_summary['mendhi'][member.rsvp_mendhi if member.rsvp_mendhi != 'pending' else 'pending'].append(member.name)
+        if member.invited_vidhi:
+            events_summary['vidhi'][member.rsvp_vidhi if member.rsvp_vidhi != 'pending' else 'pending'].append(member.name)
+        if member.invited_wedding:
+            events_summary['wedding'][member.rsvp_wedding if member.rsvp_wedding != 'pending' else 'pending'].append(member.name)
+        if member.invited_reception:
+            events_summary['reception'][member.rsvp_reception if member.rsvp_reception != 'pending' else 'pending'].append(member.name)
+    
+    context = {
+        'guest': guest,
+        'family_members': family_members,
+        'events_summary': events_summary,
+    }
+    return render(request, 'wedding/family_detail.html', context)
+
+
+@staff_member_required
 def admin_guest_list(request):
     """Admin view for full guest list with filtering"""
     guests = Guest.objects.all()

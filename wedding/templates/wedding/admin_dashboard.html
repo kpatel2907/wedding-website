@@ -316,6 +316,16 @@
             font-weight: 500;
         }
         
+        .guest-name a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        
+        .guest-name a:hover {
+            color: var(--color-primary);
+        }
+        
         .guest-code {
             font-size: 0.8rem;
             color: var(--text-secondary);
@@ -553,7 +563,9 @@
                         {% for guest in recent_rsvps %}
                         <div class="list-item">
                             <div class="guest-info">
-                                <span class="guest-name">{{ guest.name }}</span>
+                                <span class="guest-name">
+                                    <a href="{% url 'wedding:family_detail' guest.rsvp_code %}">{{ guest.party_name }}</a>
+                                </span>
                                 <span class="guest-time">{{ guest.rsvp_submitted_at|timesince }} ago</span>
                             </div>
                             <span class="status-badge responded">Responded</span>
@@ -578,7 +590,9 @@
                         {% for guest in pending_guests|slice:":20" %}
                         <div class="list-item">
                             <div class="guest-info">
-                                <span class="guest-name">{{ guest.name }}</span>
+                                <span class="guest-name">
+                                    <a href="{% url 'wedding:family_detail' guest.rsvp_code %}">{{ guest.party_name }}</a>
+                                </span>
                                 <span class="guest-code">{{ guest.rsvp_code }}</span>
                             </div>
                             <span class="status-badge pending">Pending</span>
