@@ -382,7 +382,7 @@ def admin_dashboard(request):
 def family_detail(request, rsvp_code):
     """View detailed RSVP status for a specific family"""
     guest = get_object_or_404(Guest, rsvp_code=rsvp_code.upper())
-    family_members = guest.family_members.all()
+    family_members = guest.members.all()  # Using 'members' as defined in FamilyMember model
     
     # Organize members by their RSVP status for each event
     events_summary = {
