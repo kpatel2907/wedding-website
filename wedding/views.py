@@ -315,61 +315,62 @@ def rsvp_form(request, rsvp_code):
 @staff_member_required
 def admin_dashboard(request):
     """Admin dashboard with real-time RSVP tracking"""
-    # Get all guests
-    guests = Guest.objects.all()
-    total_guests = guests.count()
+    # Get all families (Guest objects)
+    families = Guest.objects.all()
+    total_families = families.count()
     
-    # Response statistics
-    responded = guests.filter(has_responded=True).count()
-    pending = guests.filter(has_responded=False).count()
+    # Get all family members
+    members = FamilyMember.objects.all()
+    total_members = members.count()
     
-    # Per-event statistics
+    # Response statistics (family level)
+    responded = families.filter(has_responded=True).count()
+    pending_families = families.filter(has_responded=False).count()
+    
+    # Per-event statistics from FamilyMember model
     events_stats = {
         'mendhi': {
-            'invited': guests.filter(invited_mendhi=True).count(),
-            'attending': guests.filter(invited_mendhi=True, rsvp_mendhi='attending').count(),
-            'not_attending': guests.filter(invited_mendhi=True, rsvp_mendhi='not_attending').count(),
-            'pending': guests.filter(invited_mendhi=True, rsvp_mendhi='pending').count(),
-            'total_guests': guests.filter(invited_mendhi=True, rsvp_mendhi='attending').aggregate(
-                total=Sum('guests_mendhi'))['total'] or 0,
+            'invited': members.filter(invited_mendhi=True).count(),
+            'attending': members.filter(invited_mendhi=True, rsvp_mendhi='attending').count(),
+            'not_attending': members.filter(invited_mendhi=True, rsvp_mendhi='not_attending').count(),
+            'pending': members.filter(invited_mendhi=True, rsvp_mendhi='pending').count(),
+            'total_guests': members.filter(invited_mendhi=True, rsvp_mendhi='attending').count(),
         },
         'vidhi': {
-            'invited': guests.filter(invited_vidhi=True).count(),
-            'attending': guests.filter(invited_vidhi=True, rsvp_vidhi='attending').count(),
-            'not_attending': guests.filter(invited_vidhi=True, rsvp_vidhi='not_attending').count(),
-            'pending': guests.filter(invited_vidhi=True, rsvp_vidhi='pending').count(),
-            'total_guests': guests.filter(invited_vidhi=True, rsvp_vidhi='attending').aggregate(
-                total=Sum('guests_vidhi'))['total'] or 0,
+            'invited': members.filter(invited_vidhi=True).count(),
+            'attending': members.filter(invited_vidhi=True, rsvp_vidhi='attending').count(),
+            'not_attending': members.filter(invited_vidhi=True, rsvp_vidhi='not_attending').count(),
+            'pending': members.filter(invited_vidhi=True, rsvp_vidhi='pending').count(),
+            'total_guests': members.filter(invited_vidhi=True, rsvp_vidhi='attending').count(),
         },
         'wedding': {
-            'invited': guests.filter(invited_wedding=True).count(),
-            'attending': guests.filter(invited_wedding=True, rsvp_wedding='attending').count(),
-            'not_attending': guests.filter(invited_wedding=True, rsvp_wedding='not_attending').count(),
-            'pending': guests.filter(invited_wedding=True, rsvp_wedding='pending').count(),
-            'total_guests': guests.filter(invited_wedding=True, rsvp_wedding='attending').aggregate(
-                total=Sum('guests_wedding'))['total'] or 0,
+            'invited': members.filter(invited_wedding=True).count(),
+            'attending': members.filter(invited_wedding=True, rsvp_wedding='attending').count(),
+            'not_attending': members.filter(invited_wedding=True, rsvp_wedding='not_attending').count(),
+            'pending': members.filter(invited_wedding=True, rsvp_wedding='pending').count(),
+            'total_guests': members.filter(invited_wedding=True, rsvp_wedding='attending').count(),
         },
         'reception': {
-            'invited': guests.filter(invited_reception=True).count(),
-            'attending': guests.filter(invited_reception=True, rsvp_reception='attending').count(),
-            'not_attending': guests.filter(invited_reception=True, rsvp_reception='not_attending').count(),
-            'pending': guests.filter(invited_reception=True, rsvp_reception='pending').count(),
-            'total_guests': guests.filter(invited_reception=True, rsvp_reception='attending').aggregate(
-                total=Sum('guests_reception'))['total'] or 0,
+            'invited': members.filter(invited_reception=True).count(),
+            'attending': members.filter(invited_reception=True, rsvp_reception='attending').count(),
+            'not_attending': members.filter(invited_reception=True, rsvp_reception='not_attending').count(),
+            'pending': members.filter(invited_reception=True, rsvp_reception='pending').count(),
+            'total_guests': members.filter(invited_reception=True, rsvp_reception='attending').count(),
         },
     }
     
-    # Recent RSVPs (last 20)
-    recent_rsvps = guests.filter(has_responded=True).order_by('-rsvp_submitted_at')[:20]
+    # Recent RSVPs (last 20 families)
+    recent_rsvps = families.filter(has_responded=True).order_by('-rsvp_submitted_at')[:20]
     
-    # Guests who haven't responded
-    pending_guests = guests.filter(has_responded=False).order_by('name')
+    # Families who haven't responded
+    pending_guests = families.filter(has_responded=False).order_by('name')
     
     context = {
-        'total_guests': total_guests,
+        'total_guests': total_families,
+        'total_members': total_members,
         'responded': responded,
-        'pending': pending,
-        'response_rate': round((responded / total_guests * 100) if total_guests > 0 else 0, 1),
+        'pending': pending_families,
+        'response_rate': round((responded / total_families * 100) if total_families > 0 else 0, 1),
         'events_stats': events_stats,
         'recent_rsvps': recent_rsvps,
         'pending_guests': pending_guests,
