@@ -201,6 +201,71 @@ class Guest(models.Model):
         self.save(update_fields=['has_responded', 'rsvp_submitted_at', 'updated_at'])
 
 
+class FamilyMember(models.Model):
+    """Individual family member with their own event invitations"""
+    RSVP_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('attending', 'Attending'),
+        ('not_attending', 'Not Attending'),
+    ]
+    
+    RELATION_CHOICES = [
+        ('father', 'Father'),
+        ('mother', 'Mother'),
+        ('son', 'Son'),
+        ('daughter', 'Daughter'),
+        ('grandfather', 'Grandfather'),
+        ('grandmother', 'Grandmother'),
+        ('uncle', 'Uncle'),
+        ('aunt', 'Aunt'),
+        ('cousin', 'Cousin'),
+        ('spouse', 'Spouse'),
+        ('other', 'Other'),
+    ]
+    
+    # Link to family (Guest model)
+    family = models.ForeignKey(Guest, on_delete=models.CASCADE, related_name='members')
+    
+    # Member information
+    name = models.CharField(max_length=200)
+    relation = models.CharField(max_length=20, choices=RELATION_CHOICES, default='other')
+    
+    # Event invitations for this specific member
+    invited_mendhi = models.BooleanField(default=False)
+    invited_vidhi = models.BooleanField(default=False)
+    invited_wedding = models.BooleanField(default=False)
+    invited_reception = models.BooleanField(default=False)
+    
+    # RSVP responses for this member
+    rsvp_mendhi = models.CharField(max_length=20, choices=RSVP_STATUS_CHOICES, default='pending')
+    rsvp_vidhi = models.CharField(max_length=20, choices=RSVP_STATUS_CHOICES, default='pending')
+    rsvp_wedding = models.CharField(max_length=20, choices=RSVP_STATUS_CHOICES, default='pending')
+    rsvp_reception = models.CharField(max_length=20, choices=RSVP_STATUS_CHOICES, default='pending')
+    
+    # Additional info
+    dietary_requirements = models.TextField(blank=True)
+    
+    # Order for display
+    order = models.PositiveIntegerField(default=0)
+    
+    class Meta:
+        ordering = ['order', 'name']
+        verbose_name = "Family Member"
+        verbose_name_plural = "Family Members"
+    
+    def __str__(self):
+        return f"{self.name} ({self.get_relation_display()}) - {self.family.party_name}"
+    
+    @property
+    def invited_events_list(self):
+        events = []
+        if self.invited_mendhi: events.append('Mendhi')
+        if self.invited_vidhi: events.append('Vidhi')
+        if self.invited_wedding: events.append('Wedding')
+        if self.invited_reception: events.append('Reception')
+        return events
+
+
 class WeddingInfo(models.Model):
     """General wedding information (singleton model)"""
     partner1_name = models.CharField(max_length=100, default="Sarah")

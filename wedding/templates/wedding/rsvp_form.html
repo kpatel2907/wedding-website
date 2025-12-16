@@ -4,298 +4,323 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Invitation | Wedding Celebration</title>
+    <title>RSVP | {{ family.party_name }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        .invitation-page {
-            min-height: 100vh;
-            background: linear-gradient(135deg, var(--color-cream) 0%, var(--color-secondary) 50%, var(--color-blush) 100%);
-            padding: 40px 20px;
+        :root {
+            --color-primary: #b8860b;
+            --color-primary-dark: #8b6508;
+            --color-primary-light: #d4a853;
+            --color-cream: #faf8f5;
+            --color-blush: #fdf2f0;
+            --color-secondary: #f5e6d3;
+            --color-white: #ffffff;
+            --color-text: #2c2c2c;
+            --color-text-light: #666666;
+            --color-success: #4caf50;
+            --color-danger: #e74c3c;
+            --font-heading: 'Cormorant Garamond', serif;
+            --font-body: 'Montserrat', sans-serif;
         }
         
-        .invitation-container {
-            max-width: 800px;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, var(--color-cream) 0%, var(--color-secondary) 50%, var(--color-blush) 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
             margin: 0 auto;
         }
         
+        /* Header Card */
         .invitation-header {
             background: var(--color-white);
-            padding: 50px;
             border-radius: 20px 20px 0 0;
+            padding: 50px 40px;
             text-align: center;
-            box-shadow: var(--shadow-soft);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .invitation-header .subtitle {
+            font-size: 1rem;
+            color: var(--color-text-light);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
         }
         
         .invitation-header h1 {
             font-family: var(--font-heading);
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 400;
             color: var(--color-text);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         
-        .guest-name {
+        .family-name {
             font-family: var(--font-heading);
-            font-size: 2.5rem;
-            font-weight: 500;
+            font-size: 2rem;
             color: var(--color-primary);
-            margin: 20px 0;
-        }
-        
-        .invitation-message {
-            color: var(--color-text-light);
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
-        
-        .party-info {
-            background: var(--color-cream);
-            padding: 15px 25px;
-            border-radius: 10px;
-            display: inline-block;
             margin-top: 20px;
         }
         
-        .party-info span {
-            font-weight: 600;
-            color: var(--color-primary);
+        .member-count {
+            color: var(--color-text-light);
+            font-size: 0.95rem;
+            margin-top: 10px;
         }
         
+        .divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .divider-line {
+            width: 60px;
+            height: 1px;
+            background: var(--color-primary);
+        }
+        
+        .divider-icon {
+            color: var(--color-primary);
+            font-size: 1.2rem;
+        }
+        
+        /* Form Body */
         .invitation-body {
             background: var(--color-white);
-            padding: 50px;
-            box-shadow: var(--shadow-soft);
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
         }
         
-        .events-invited {
+        /* Event Section */
+        .event-section {
             margin-bottom: 40px;
-        }
-        
-        .events-invited h2 {
-            font-family: var(--font-heading);
-            font-size: 1.8rem;
-            font-weight: 400;
-            color: var(--color-text);
-            margin-bottom: 25px;
-            text-align: center;
-        }
-        
-        .event-rsvp-card {
-            background: var(--color-cream);
+            border: 2px solid var(--color-secondary);
             border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 25px;
-            border-left: 4px solid var(--color-primary);
-        }
-        
-        .event-rsvp-card.featured {
-            border-left-width: 6px;
-            background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-cream) 100%);
+            overflow: hidden;
         }
         
         .event-header {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+            color: white;
+            padding: 20px 25px;
             display: flex;
             align-items: center;
             gap: 15px;
-            margin-bottom: 15px;
         }
         
         .event-icon {
             font-size: 2rem;
         }
         
-        .event-name {
-            font-family: var(--font-heading);
-            font-size: 1.5rem;
-            font-weight: 500;
-            color: var(--color-text);
-        }
-        
-        .event-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-            font-size: 0.95rem;
-            color: var(--color-text-light);
-        }
-        
-        .event-details strong {
-            color: var(--color-text);
-        }
-        
-        .rsvp-options {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(0,0,0,0.1);
-        }
-        
-        .rsvp-options label {
-            font-weight: 500;
-            margin-bottom: 10px;
-            display: block;
-            color: var(--color-text);
-        }
-        
-        .radio-group {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .radio-option {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 20px;
-            background: var(--color-white);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-            border: 2px solid transparent;
-        }
-        
-        .radio-option:hover {
-            border-color: var(--color-primary-light);
-        }
-        
-        .radio-option input[type="radio"] {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--color-primary);
-        }
-        
-        .radio-option.attending {
-            color: #2e7d32;
-        }
-        
-        .radio-option.not-attending {
-            color: #c62828;
-        }
-        
-        .guest-count-section {
-            margin-top: 15px;
-            padding: 15px;
-            background: var(--color-white);
-            border-radius: 8px;
-        }
-        
-        .guest-count-section label {
-            font-size: 0.9rem;
-            margin-bottom: 8px;
-        }
-        
-        .guest-count-input {
-            width: 80px;
-            padding: 10px;
-            font-size: 1rem;
-            border: 2px solid var(--color-secondary);
-            border-radius: 8px;
-            text-align: center;
-        }
-        
-        .guest-count-input:focus {
-            outline: none;
-            border-color: var(--color-primary);
-        }
-        
-        .additional-info {
-            margin-top: 40px;
-            padding-top: 40px;
-            border-top: 2px solid var(--color-secondary);
-        }
-        
-        .additional-info h2 {
+        .event-info h3 {
             font-family: var(--font-heading);
             font-size: 1.5rem;
             font-weight: 400;
+            margin-bottom: 5px;
+        }
+        
+        .event-info .event-date {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .event-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            padding: 20px 25px;
+            background: var(--color-cream);
+            border-bottom: 1px solid var(--color-secondary);
+        }
+        
+        .event-detail {
+            font-size: 0.9rem;
+        }
+        
+        .event-detail strong {
             color: var(--color-text);
-            margin-bottom: 25px;
+        }
+        
+        /* Members Grid */
+        .members-list {
+            padding: 25px;
+        }
+        
+        .members-list h4 {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            color: var(--color-text);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .member-card {
+            background: var(--color-cream);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .member-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .member-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        .member-name {
+            font-weight: 500;
+            font-size: 1.1rem;
+            color: var(--color-text);
+        }
+        
+        .member-relation {
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+        }
+        
+        .rsvp-toggle {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .rsvp-toggle label {
+            cursor: pointer;
+        }
+        
+        .rsvp-toggle input[type="radio"] {
+            display: none;
+        }
+        
+        .rsvp-toggle .toggle-btn {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid #ddd;
+            background: white;
+        }
+        
+        .rsvp-toggle input[type="radio"]:checked + .toggle-btn.yes {
+            background: var(--color-success);
+            border-color: var(--color-success);
+            color: white;
+        }
+        
+        .rsvp-toggle input[type="radio"]:checked + .toggle-btn.no {
+            background: var(--color-danger);
+            border-color: var(--color-danger);
+            color: white;
+        }
+        
+        /* No Members Message */
+        .no-members {
+            padding: 25px;
+            text-align: center;
+            color: var(--color-text-light);
+            font-style: italic;
+        }
+        
+        /* Additional Info */
+        .additional-info {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid var(--color-secondary);
+        }
+        
+        .additional-info h3 {
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            margin-bottom: 20px;
         }
         
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         
         .form-group label {
             display: block;
             font-size: 0.9rem;
             font-weight: 500;
-            color: var(--color-text);
             margin-bottom: 8px;
+            color: var(--color-text);
         }
         
-        .form-textarea {
+        .form-group textarea {
             width: 100%;
             padding: 15px;
+            border: 2px solid var(--color-secondary);
+            border-radius: 10px;
             font-family: var(--font-body);
             font-size: 1rem;
-            border: 2px solid var(--color-secondary);
-            border-radius: 8px;
             resize: vertical;
             min-height: 100px;
         }
         
-        .form-textarea:focus {
+        .form-group textarea:focus {
             outline: none;
             border-color: var(--color-primary);
         }
         
+        /* Submit Button */
         .invitation-footer {
             background: var(--color-white);
-            padding: 40px 50px;
             border-radius: 0 0 20px 20px;
+            padding: 40px;
             text-align: center;
-            box-shadow: var(--shadow-soft);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
         }
         
-        .submit-rsvp-btn {
+        .submit-btn {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+            color: white;
+            border: none;
             padding: 18px 60px;
             font-family: var(--font-body);
             font-size: 1rem;
             font-weight: 600;
             letter-spacing: 2px;
             text-transform: uppercase;
-            color: var(--color-white);
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-            border: none;
-            border-radius: 10px;
+            border-radius: 50px;
             cursor: pointer;
-            transition: var(--transition-smooth);
+            transition: all 0.3s ease;
         }
         
-        .submit-rsvp-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(184, 134, 11, 0.3);
-        }
-        
-        .success-message {
-            background: #e8f5e9;
-            border: 2px solid #4caf50;
-            border-radius: 15px;
-            padding: 40px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .success-message .icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-        }
-        
-        .success-message h2 {
-            font-family: var(--font-heading);
-            font-size: 2rem;
-            color: #2e7d32;
-            margin-bottom: 15px;
-        }
-        
-        .success-message p {
-            color: #1b5e20;
-            font-size: 1.1rem;
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(184, 134, 11, 0.4);
         }
         
         .back-link {
@@ -306,6 +331,34 @@
             font-size: 0.9rem;
         }
         
+        /* Success Message */
+        .success-message {
+            background: var(--color-white);
+            border-radius: 20px;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .success-message .icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        .success-message h2 {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            color: var(--color-success);
+            margin-bottom: 15px;
+        }
+        
+        .success-message p {
+            color: var(--color-text-light);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        /* Already Responded Notice */
         .already-responded {
             background: #fff3e0;
             border: 2px solid #ff9800;
@@ -313,375 +366,272 @@
             padding: 15px 20px;
             margin-bottom: 30px;
             text-align: center;
-        }
-        
-        .already-responded p {
             color: #e65100;
-            margin: 0;
         }
         
+        /* Responsive */
         @media (max-width: 768px) {
-            .invitation-page {
-                padding: 20px 15px;
-            }
-            
             .invitation-header, .invitation-body, .invitation-footer {
                 padding: 30px 20px;
             }
             
             .invitation-header h1 {
-                font-size: 1.6rem;
+                font-size: 2rem;
             }
             
-            .guest-name {
-                font-size: 1.8rem;
+            .family-name {
+                font-size: 1.5rem;
             }
             
-            .invitation-message {
-                font-size: 1rem;
-            }
-            
-            .party-info {
-                padding: 12px 20px;
-                font-size: 0.9rem;
-            }
-            
-            .radio-group {
+            .member-card {
                 flex-direction: column;
-                gap: 10px;
+                text-align: center;
             }
             
-            .radio-option {
-                padding: 15px;
-                width: 100%;
-                justify-content: flex-start;
+            .member-info {
+                flex-direction: column;
             }
             
-            .event-details {
+            .event-details-grid {
                 grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            
-            .event-rsvp-card {
-                padding: 20px;
-            }
-            
-            .event-header {
-                gap: 10px;
-            }
-            
-            .event-icon {
-                font-size: 1.5rem;
-            }
-            
-            .event-name {
-                font-size: 1.3rem;
-            }
-            
-            .events-invited h2 {
-                font-size: 1.5rem;
-            }
-            
-            .additional-info h2 {
-                font-size: 1.3rem;
-            }
-            
-            .form-textarea {
-                font-size: 16px; /* Prevents iOS zoom */
-            }
-            
-            .submit-rsvp-btn {
-                padding: 15px 40px;
-                font-size: 0.9rem;
             }
         }
         
         @media (max-width: 480px) {
-            .invitation-page {
-                padding: 15px 10px;
+            body {
+                padding: 10px;
             }
             
-            .invitation-header {
-                padding: 25px 15px;
-                border-radius: 15px 15px 0 0;
+            .rsvp-toggle {
+                flex-direction: column;
+                width: 100%;
             }
             
-            .invitation-body {
-                padding: 25px 15px;
-            }
-            
-            .invitation-footer {
-                padding: 25px 15px;
-                border-radius: 0 0 15px 15px;
-            }
-            
-            .invitation-header h1 {
-                font-size: 1.4rem;
-            }
-            
-            .guest-name {
-                font-size: 1.5rem;
-            }
-            
-            .invitation-message {
-                font-size: 0.9rem;
-            }
-            
-            .event-rsvp-card {
-                padding: 15px;
-                border-radius: 10px;
-            }
-            
-            .event-name {
-                font-size: 1.2rem;
-            }
-            
-            .event-details {
-                font-size: 0.85rem;
-            }
-            
-            .rsvp-options label {
-                font-size: 0.9rem;
-            }
-            
-            .guest-count-section {
-                padding: 12px;
-            }
-            
-            .guest-count-section label {
-                font-size: 0.85rem;
-            }
-            
-            .form-group label {
-                font-size: 0.85rem;
-            }
-            
-            .form-textarea {
-                min-height: 80px;
-                padding: 12px;
-            }
-            
-            .success-message {
-                padding: 30px 20px;
-            }
-            
-            .success-message .icon {
-                font-size: 3rem;
-            }
-            
-            .success-message h2 {
-                font-size: 1.6rem;
+            .rsvp-toggle .toggle-btn {
+                width: 100%;
+                text-align: center;
             }
         }
     </style>
 </head>
 <body>
-    <div class="invitation-page">
-        <div class="invitation-container">
-            {% if rsvp_success %}
-            <div class="success-message">
-                <div class="icon">✓</div>
-                <h2>Thank You!</h2>
-                <p>Your RSVP has been received. We can't wait to celebrate with you!</p>
-                <a href="{% url 'wedding:home' %}" class="back-link">← Back to Home</a>
-            </div>
-            {% endif %}
+    <div class="container">
+        {% if rsvp_success %}
+        <div class="success-message">
+            <div class="icon">✓</div>
+            <h2>Thank You!</h2>
+            <p>Your RSVP for {{ family.party_name }} has been received.<br>We can't wait to celebrate with you!</p>
+            <a href="{% url 'wedding:home' %}" class="back-link">← Back to Home</a>
+        </div>
+        {% else %}
+        
+        <form method="post">
+            {% csrf_token %}
             
             <div class="invitation-header">
-                <p class="invitation-message">You are cordially invited to the wedding celebration of</p>
+                <p class="subtitle">You are cordially invited</p>
                 <h1>
                     {% if wedding_info.partner1_name %}{{ wedding_info.partner1_name }}{% else %}Prit{% endif %}
-                    &
+                    &amp;
                     {% if wedding_info.partner2_name %}{{ wedding_info.partner2_name }}{% else %}Khushboo{% endif %}
                 </h1>
-                
-                <div class="header-divider" style="margin: 25px 0;">
+                <div class="divider">
                     <span class="divider-line"></span>
                     <span class="divider-icon">♥</span>
                     <span class="divider-line"></span>
                 </div>
-                
-                <p class="guest-name">{{ guest.name }}</p>
-                
-                {% if guest.party_name %}
-                <div class="party-info">
-                    <span>{{ guest.party_name }}</span>
-                </div>
-                {% endif %}
+                <p class="family-name">{{ family.party_name }}</p>
+                <p class="member-count">{{ members|length }} family member{{ members|length|pluralize }}</p>
             </div>
             
-            {% if not rsvp_success %}
-            <form method="post">
-                {% csrf_token %}
-                <div class="invitation-body">
-                    {% if guest.has_responded %}
-                    <div class="already-responded">
-                        <p>📝 You have already submitted your RSVP. You can update your response below.</p>
-                    </div>
-                    {% endif %}
-                    
-                    <div class="events-invited">
-                        <h2>You're Invited To</h2>
-                        
-                        {% if guest.invited_mendhi %}
-                        <div class="event-rsvp-card">
-                            <div class="event-header">
-                                <span class="event-icon">✿</span>
-                                <span class="event-name">Mendhi</span>
-                            </div>
-                            <div class="event-details">
-                                <div><strong>Date:</strong> December 25, 2025</div>
-                                <div><strong>Time:</strong> 4:00 PM onwards</div>
-                                <div><strong>Venue:</strong> The Garden Pavilion</div>
-                                <div><strong>Dress Code:</strong> Colorful Indian Attire</div>
-                            </div>
-                            <div class="rsvp-options">
-                                <label>Will you attend?</label>
-                                <div class="radio-group">
-                                    <label class="radio-option attending">
-                                        <input type="radio" name="rsvp_mendhi" value="attending" {% if guest.rsvp_mendhi == 'attending' %}checked{% endif %} required>
-                                        <span>Yes, I will attend</span>
-                                    </label>
-                                    <label class="radio-option not-attending">
-                                        <input type="radio" name="rsvp_mendhi" value="not_attending" {% if guest.rsvp_mendhi == 'not_attending' %}checked{% endif %}>
-                                        <span>Sorry, I cannot attend</span>
-                                    </label>
-                                </div>
-                                <div class="guest-count-section">
-                                    <label>Number of guests attending:</label>
-                                    <input type="number" name="guests_mendhi" class="guest-count-input" 
-                                           value="{{ guest.guests_mendhi|default:1 }}" min="0" max="99">
-                                </div>
-                            </div>
-                        </div>
-                        {% endif %}
-                        
-                        {% if guest.invited_vidhi %}
-                        <div class="event-rsvp-card">
-                            <div class="event-header">
-                                <span class="event-icon">🪔</span>
-                                <span class="event-name">Vidhi</span>
-                            </div>
-                            <div class="event-details">
-                                <div><strong>Date:</strong> December 26, 2025</div>
-                                <div><strong>Time:</strong> 10:00 AM - 2:00 PM</div>
-                                <div><strong>Venue:</strong> Family Residence</div>
-                                <div><strong>Dress Code:</strong> Traditional Indian Wear</div>
-                            </div>
-                            <div class="rsvp-options">
-                                <label>Will you attend?</label>
-                                <div class="radio-group">
-                                    <label class="radio-option attending">
-                                        <input type="radio" name="rsvp_vidhi" value="attending" {% if guest.rsvp_vidhi == 'attending' %}checked{% endif %} required>
-                                        <span>Yes, I will attend</span>
-                                    </label>
-                                    <label class="radio-option not-attending">
-                                        <input type="radio" name="rsvp_vidhi" value="not_attending" {% if guest.rsvp_vidhi == 'not_attending' %}checked{% endif %}>
-                                        <span>Sorry, I cannot attend</span>
-                                    </label>
-                                </div>
-                                <div class="guest-count-section">
-                                    <label>Number of guests attending:</label>
-                                    <input type="number" name="guests_vidhi" class="guest-count-input" 
-                                           value="{{ guest.guests_vidhi|default:1 }}" min="0" max="99">
-                                </div>
-                            </div>
-                        </div>
-                        {% endif %}
-                        
-                        {% if guest.invited_wedding %}
-                        <div class="event-rsvp-card featured">
-                            <div class="event-header">
-                                <span class="event-icon">💒</span>
-                                <span class="event-name">Wedding Ceremony</span>
-                            </div>
-                            <div class="event-details">
-                                <div><strong>Date:</strong> December 27, 2025</div>
-                                <div><strong>Time:</strong> 6:00 PM onwards</div>
-                                <div><strong>Venue:</strong> The Grand Ballroom</div>
-                                <div><strong>Dress Code:</strong> Formal Indian / Western</div>
-                            </div>
-                            <div class="rsvp-options">
-                                <label>Will you attend?</label>
-                                <div class="radio-group">
-                                    <label class="radio-option attending">
-                                        <input type="radio" name="rsvp_wedding" value="attending" {% if guest.rsvp_wedding == 'attending' %}checked{% endif %} required>
-                                        <span>Yes, I will attend</span>
-                                    </label>
-                                    <label class="radio-option not-attending">
-                                        <input type="radio" name="rsvp_wedding" value="not_attending" {% if guest.rsvp_wedding == 'not_attending' %}checked{% endif %}>
-                                        <span>Sorry, I cannot attend</span>
-                                    </label>
-                                </div>
-                                <div class="guest-count-section">
-                                    <label>Number of guests attending:</label>
-                                    <input type="number" name="guests_wedding" class="guest-count-input" 
-                                           value="{{ guest.guests_wedding|default:1 }}" min="0" max="99">
-                                </div>
-                            </div>
-                        </div>
-                        {% endif %}
-                        
-                        {% if guest.invited_reception %}
-                        <div class="event-rsvp-card">
-                            <div class="event-header">
-                                <span class="event-icon">🎉</span>
-                                <span class="event-name">Reception</span>
-                            </div>
-                            <div class="event-details">
-                                <div><strong>Date:</strong> December 28, 2025</div>
-                                <div><strong>Time:</strong> 7:00 PM onwards</div>
-                                <div><strong>Venue:</strong> Starlight Terrace</div>
-                                <div><strong>Dress Code:</strong> Glamorous Evening Wear</div>
-                            </div>
-                            <div class="rsvp-options">
-                                <label>Will you attend?</label>
-                                <div class="radio-group">
-                                    <label class="radio-option attending">
-                                        <input type="radio" name="rsvp_reception" value="attending" {% if guest.rsvp_reception == 'attending' %}checked{% endif %} required>
-                                        <span>Yes, I will attend</span>
-                                    </label>
-                                    <label class="radio-option not-attending">
-                                        <input type="radio" name="rsvp_reception" value="not_attending" {% if guest.rsvp_reception == 'not_attending' %}checked{% endif %}>
-                                        <span>Sorry, I cannot attend</span>
-                                    </label>
-                                </div>
-                                <div class="guest-count-section">
-                                    <label>Number of guests attending:</label>
-                                    <input type="number" name="guests_reception" class="guest-count-input" 
-                                           value="{{ guest.guests_reception|default:1 }}" min="0" max="99">
-                                </div>
-                            </div>
-                        </div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="additional-info">
-                        <h2>Additional Information</h2>
-                        
-                        <div class="form-group">
-                            <label for="dietary_requirements">Dietary Requirements</label>
-                            <textarea name="dietary_requirements" id="dietary_requirements" class="form-textarea"
-                                      placeholder="Please let us know of any dietary requirements or allergies">{{ guest.dietary_requirements }}</textarea>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="message">Message for the Couple</label>
-                            <textarea name="message" id="message" class="form-textarea"
-                                      placeholder="Share your wishes or a message for us">{{ guest.message }}</textarea>
-                        </div>
-                    </div>
+            <div class="invitation-body">
+                {% if family.has_responded %}
+                <div class="already-responded">
+                    <p>📝 You have already submitted your RSVP. You can update your responses below.</p>
                 </div>
+                {% endif %}
                 
-                <div class="invitation-footer">
-                    <button type="submit" class="submit-rsvp-btn">Submit RSVP</button>
-                    <br>
-                    <a href="{% url 'wedding:home' %}" class="back-link">← Back to Home</a>
+                <!-- Mendhi -->
+                {% if events_with_members.mendhi.members %}
+                <div class="event-section">
+                    <div class="event-header">
+                        <span class="event-icon">✿</span>
+                        <div class="event-info">
+                            <h3>Mendhi</h3>
+                            <span class="event-date">{{ event_details.mendhi.date }} • {{ event_details.mendhi.time }}</span>
+                        </div>
+                    </div>
+                    <div class="event-details-grid">
+                        <div class="event-detail"><strong>Venue:</strong> {{ event_details.mendhi.venue_name }}</div>
+                        <div class="event-detail"><strong>Dress Code:</strong> {{ event_details.mendhi.dress_code }}</div>
+                    </div>
+                    <div class="members-list">
+                        <h4>👤 Who's Invited:</h4>
+                        {% for member in events_with_members.mendhi.members %}
+                        <div class="member-card">
+                            <div class="member-info">
+                                <div class="member-avatar">{{ member.name|slice:":1" }}</div>
+                                <div>
+                                    <div class="member-name">{{ member.name }}</div>
+                                    <div class="member-relation">{{ member.get_relation_display }}</div>
+                                </div>
+                            </div>
+                            <div class="rsvp-toggle">
+                                <label>
+                                    <input type="radio" name="rsvp_mendhi_{{ member.id }}" value="attending" {% if member.rsvp_mendhi == 'attending' %}checked{% endif %} required>
+                                    <span class="toggle-btn yes">✓ Attending</span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="rsvp_mendhi_{{ member.id }}" value="not_attending" {% if member.rsvp_mendhi == 'not_attending' %}checked{% endif %}>
+                                    <span class="toggle-btn no">✗ Cannot Attend</span>
+                                </label>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
-            </form>
-            {% endif %}
-        </div>
+                {% endif %}
+                
+                <!-- Vidhi -->
+                {% if events_with_members.vidhi.members %}
+                <div class="event-section">
+                    <div class="event-header">
+                        <span class="event-icon">🪔</span>
+                        <div class="event-info">
+                            <h3>Vidhi</h3>
+                            <span class="event-date">{{ event_details.vidhi.date }} • {{ event_details.vidhi.time }}</span>
+                        </div>
+                    </div>
+                    <div class="event-details-grid">
+                        <div class="event-detail"><strong>Venue:</strong> {{ event_details.vidhi.venue_name }}</div>
+                        <div class="event-detail"><strong>Dress Code:</strong> {{ event_details.vidhi.dress_code }}</div>
+                    </div>
+                    <div class="members-list">
+                        <h4>👤 Who's Invited:</h4>
+                        {% for member in events_with_members.vidhi.members %}
+                        <div class="member-card">
+                            <div class="member-info">
+                                <div class="member-avatar">{{ member.name|slice:":1" }}</div>
+                                <div>
+                                    <div class="member-name">{{ member.name }}</div>
+                                    <div class="member-relation">{{ member.get_relation_display }}</div>
+                                </div>
+                            </div>
+                            <div class="rsvp-toggle">
+                                <label>
+                                    <input type="radio" name="rsvp_vidhi_{{ member.id }}" value="attending" {% if member.rsvp_vidhi == 'attending' %}checked{% endif %} required>
+                                    <span class="toggle-btn yes">✓ Attending</span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="rsvp_vidhi_{{ member.id }}" value="not_attending" {% if member.rsvp_vidhi == 'not_attending' %}checked{% endif %}>
+                                    <span class="toggle-btn no">✗ Cannot Attend</span>
+                                </label>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Wedding -->
+                {% if events_with_members.wedding.members %}
+                <div class="event-section">
+                    <div class="event-header">
+                        <span class="event-icon">💒</span>
+                        <div class="event-info">
+                            <h3>Wedding Ceremony</h3>
+                            <span class="event-date">{{ event_details.wedding.date }} • {{ event_details.wedding.time }}</span>
+                        </div>
+                    </div>
+                    <div class="event-details-grid">
+                        <div class="event-detail"><strong>Venue:</strong> {{ event_details.wedding.venue_name }}</div>
+                        <div class="event-detail"><strong>Dress Code:</strong> {{ event_details.wedding.dress_code }}</div>
+                    </div>
+                    <div class="members-list">
+                        <h4>👤 Who's Invited:</h4>
+                        {% for member in events_with_members.wedding.members %}
+                        <div class="member-card">
+                            <div class="member-info">
+                                <div class="member-avatar">{{ member.name|slice:":1" }}</div>
+                                <div>
+                                    <div class="member-name">{{ member.name }}</div>
+                                    <div class="member-relation">{{ member.get_relation_display }}</div>
+                                </div>
+                            </div>
+                            <div class="rsvp-toggle">
+                                <label>
+                                    <input type="radio" name="rsvp_wedding_{{ member.id }}" value="attending" {% if member.rsvp_wedding == 'attending' %}checked{% endif %} required>
+                                    <span class="toggle-btn yes">✓ Attending</span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="rsvp_wedding_{{ member.id }}" value="not_attending" {% if member.rsvp_wedding == 'not_attending' %}checked{% endif %}>
+                                    <span class="toggle-btn no">✗ Cannot Attend</span>
+                                </label>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Reception -->
+                {% if events_with_members.reception.members %}
+                <div class="event-section">
+                    <div class="event-header">
+                        <span class="event-icon">🎉</span>
+                        <div class="event-info">
+                            <h3>Reception</h3>
+                            <span class="event-date">{{ event_details.reception.date }} • {{ event_details.reception.time }}</span>
+                        </div>
+                    </div>
+                    <div class="event-details-grid">
+                        <div class="event-detail"><strong>Venue:</strong> {{ event_details.reception.venue_name }}</div>
+                        <div class="event-detail"><strong>Dress Code:</strong> {{ event_details.reception.dress_code }}</div>
+                    </div>
+                    <div class="members-list">
+                        <h4>👤 Who's Invited:</h4>
+                        {% for member in events_with_members.reception.members %}
+                        <div class="member-card">
+                            <div class="member-info">
+                                <div class="member-avatar">{{ member.name|slice:":1" }}</div>
+                                <div>
+                                    <div class="member-name">{{ member.name }}</div>
+                                    <div class="member-relation">{{ member.get_relation_display }}</div>
+                                </div>
+                            </div>
+                            <div class="rsvp-toggle">
+                                <label>
+                                    <input type="radio" name="rsvp_reception_{{ member.id }}" value="attending" {% if member.rsvp_reception == 'attending' %}checked{% endif %} required>
+                                    <span class="toggle-btn yes">✓ Attending</span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="rsvp_reception_{{ member.id }}" value="not_attending" {% if member.rsvp_reception == 'not_attending' %}checked{% endif %}>
+                                    <span class="toggle-btn no">✗ Cannot Attend</span>
+                                </label>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Additional Info -->
+                <div class="additional-info">
+                    <h3>💬 Additional Message (Optional)</h3>
+                    <div class="form-group">
+                        <label>Share any message or special wishes with the couple:</label>
+                        <textarea name="message" placeholder="We're so happy for you both...">{{ family.message }}</textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="invitation-footer">
+                <button type="submit" class="submit-btn">Submit RSVP</button>
+                <br>
+                <a href="{% url 'wedding:home' %}" class="back-link">← Back to Home</a>
+            </div>
+        </form>
+        {% endif %}
     </div>
 </body>
 </html>
-

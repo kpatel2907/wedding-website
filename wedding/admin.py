@@ -2,7 +2,50 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
 from django.db.models import Sum
-from .models import Event, StoryMilestone, RSVP, WeddingInfo, Guest
+from .models import Event, StoryMilestone, RSVP, WeddingInfo, Guest, FamilyMember
+
+
+class FamilyMemberInline(admin.TabularInline):
+    model = FamilyMember
+    extra = 1
+    fields = ['name', 'relation', 'invited_mendhi', 'invited_vidhi', 'invited_wedding', 'invited_reception', 'rsvp_mendhi', 'rsvp_vidhi', 'rsvp_wedding', 'rsvp_reception']
+
+
+@admin.register(FamilyMember)
+class FamilyMemberAdmin(admin.ModelAdmin):
+    list_display = ['name', 'relation', 'family_name', 'events_invited', 'rsvp_status_display']
+    list_filter = ['relation', 'invited_mendhi', 'invited_vidhi', 'invited_wedding', 'invited_reception']
+    search_fields = ['name', 'family__party_name']
+    
+    def family_name(self, obj):
+        return obj.family.party_name
+    family_name.short_description = 'Family'
+    
+    def events_invited(self, obj):
+        events = []
+        if obj.invited_mendhi: events.append('M')
+        if obj.invited_vidhi: events.append('V')
+        if obj.invited_wedding: events.append('W')
+        if obj.invited_reception: events.append('R')
+        return ' | '.join(events) if events else '-'
+    events_invited.short_description = 'Invited To'
+    
+    def rsvp_status_display(self, obj):
+        parts = []
+        if obj.invited_mendhi:
+            color = 'green' if obj.rsvp_mendhi == 'attending' else ('red' if obj.rsvp_mendhi == 'not_attending' else 'gray')
+            parts.append(f'<span style="color:{color}">M</span>')
+        if obj.invited_vidhi:
+            color = 'green' if obj.rsvp_vidhi == 'attending' else ('red' if obj.rsvp_vidhi == 'not_attending' else 'gray')
+            parts.append(f'<span style="color:{color}">V</span>')
+        if obj.invited_wedding:
+            color = 'green' if obj.rsvp_wedding == 'attending' else ('red' if obj.rsvp_wedding == 'not_attending' else 'gray')
+            parts.append(f'<span style="color:{color}">W</span>')
+        if obj.invited_reception:
+            color = 'green' if obj.rsvp_reception == 'attending' else ('red' if obj.rsvp_reception == 'not_attending' else 'gray')
+            parts.append(f'<span style="color:{color}">R</span>')
+        return format_html(' '.join(parts)) if parts else '-'
+    rsvp_status_display.short_description = 'RSVP Status'
 
 
 @admin.register(Event)
@@ -24,9 +67,9 @@ class StoryMilestoneAdmin(admin.ModelAdmin):
 @admin.register(Guest)
 class GuestAdmin(admin.ModelAdmin):
     list_display = [
-        'name', 'rsvp_code_display', 'party_size', 'invited_events_display', 
-        'response_status', 'rsvp_summary_display', 'rsvp_submitted_at'
+        'party_name', 'rsvp_code_display', 'member_count', 'response_status', 'rsvp_submitted_at'
     ]
+    inlines = [FamilyMemberInline]
     list_filter = [
         'has_responded', 
         'invited_mendhi', 'invited_vidhi', 'invited_wedding', 'invited_reception',
@@ -75,6 +118,10 @@ class GuestAdmin(admin.ModelAdmin):
         )
     rsvp_code_display.short_description = 'RSVP Code'
     rsvp_code_display.admin_order_field = 'rsvp_code'
+    
+    def member_count(self, obj):
+        return obj.members.count()
+    member_count.short_description = 'Members'
     
     def party_size(self, obj):
         return obj.max_guests

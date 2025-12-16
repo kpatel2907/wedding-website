@@ -1,52 +1,128 @@
 from django.core.management.base import BaseCommand
-from wedding.models import Guest
+from wedding.models import Guest, FamilyMember
 
 
 class Command(BaseCommand):
-    help = 'Create initial test guests with varied event invitations'
+    help = 'Create 5 families with individual member event invitations'
 
     def handle(self, *args, **options):
-        # Delete all existing guests to reset with new randomized invitations
+        # Clear existing data
+        FamilyMember.objects.all().delete()
         Guest.objects.all().delete()
-        self.stdout.write('Cleared existing guests')
+        self.stdout.write('Cleared existing families and members')
         
-        # Guests with varied event invitations
-        guests_data = [
-            # All 4 events (5 guests)
-            {'name': 'Sharma Family', 'email': 'sharma001@email.com', 'phone': '9876543001', 'party_name': 'The Sharma Family', 'max_guests': 10, 'rsvp_code': 'SHARMA01', 'invited_mendhi': True, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
-            {'name': 'Patel Family', 'email': 'patel002@email.com', 'phone': '9876543002', 'party_name': 'The Patel Family', 'max_guests': 10, 'rsvp_code': 'PATEL002', 'invited_mendhi': True, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
-            {'name': 'Mehta Family', 'email': 'mehta003@email.com', 'phone': '9876543003', 'party_name': 'The Mehta Family', 'max_guests': 10, 'rsvp_code': 'MEHTA003', 'invited_mendhi': True, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
-            {'name': 'Singh Family', 'email': 'singh005@email.com', 'phone': '9876543005', 'party_name': 'The Singh Family', 'max_guests': 10, 'rsvp_code': 'SINGH005', 'invited_mendhi': True, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
-            {'name': 'Test Guest', 'email': 'test@email.com', 'phone': '1234567890', 'party_name': 'Test Party', 'max_guests': 10, 'rsvp_code': 'TESTCODE', 'invited_mendhi': True, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
-            
-            # Wedding + Reception only (3 guests)
-            {'name': 'Desai Family', 'email': 'desai004@email.com', 'phone': '9876543004', 'party_name': 'The Desai Family', 'max_guests': 10, 'rsvp_code': 'DESAI004', 'invited_mendhi': False, 'invited_vidhi': False, 'invited_wedding': True, 'invited_reception': True},
-            {'name': 'Gupta Family', 'email': 'gupta006@email.com', 'phone': '9876543006', 'party_name': 'The Gupta Family', 'max_guests': 10, 'rsvp_code': 'GUPTA006', 'invited_mendhi': False, 'invited_vidhi': False, 'invited_wedding': True, 'invited_reception': True},
-            {'name': 'Reddy Family', 'email': 'reddy010@email.com', 'phone': '9876543010', 'party_name': 'The Reddy Family', 'max_guests': 10, 'rsvp_code': 'REDDY010', 'invited_mendhi': False, 'invited_vidhi': False, 'invited_wedding': True, 'invited_reception': True},
-            
-            # 3 events - Vidhi, Wedding, Reception (2 guests)
-            {'name': 'Kumar Family', 'email': 'kumar007@email.com', 'phone': '9876543007', 'party_name': 'The Kumar Family', 'max_guests': 10, 'rsvp_code': 'KUMAR007', 'invited_mendhi': False, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
-            {'name': 'Agarwal Family', 'email': 'agarwal011@email.com', 'phone': '9876543011', 'party_name': 'The Agarwal Family', 'max_guests': 10, 'rsvp_code': 'AGARWAL1', 'invited_mendhi': False, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
-            
-            # 3 events - Mendhi, Wedding, Reception (2 guests)
-            {'name': 'Joshi Family', 'email': 'joshi008@email.com', 'phone': '9876543008', 'party_name': 'The Joshi Family', 'max_guests': 10, 'rsvp_code': 'JOSHI008', 'invited_mendhi': True, 'invited_vidhi': False, 'invited_wedding': True, 'invited_reception': True},
-            {'name': 'Malhotra Family', 'email': 'malhotra012@email.com', 'phone': '9876543012', 'party_name': 'The Malhotra Family', 'max_guests': 10, 'rsvp_code': 'MALHOTR1', 'invited_mendhi': True, 'invited_vidhi': False, 'invited_wedding': True, 'invited_reception': True},
-            
-            # Wedding only (2 guests)
-            {'name': 'Verma Family', 'email': 'verma009@email.com', 'phone': '9876543009', 'party_name': 'The Verma Family', 'max_guests': 10, 'rsvp_code': 'VERMA009', 'invited_mendhi': False, 'invited_vidhi': False, 'invited_wedding': True, 'invited_reception': False},
-            {'name': 'Kapoor Family', 'email': 'kapoor013@email.com', 'phone': '9876543013', 'party_name': 'The Kapoor Family', 'max_guests': 10, 'rsvp_code': 'KAPOOR01', 'invited_mendhi': False, 'invited_vidhi': False, 'invited_wedding': True, 'invited_reception': False},
-            
-            # Reception only (1 guest)
-            {'name': 'Iyer Family', 'email': 'iyer014@email.com', 'phone': '9876543014', 'party_name': 'The Iyer Family', 'max_guests': 10, 'rsvp_code': 'IYER0014', 'invited_mendhi': False, 'invited_vidhi': False, 'invited_wedding': False, 'invited_reception': True},
+        # Define 5 families with their members and invitations
+        families_data = [
+            {
+                'family': {
+                    'name': 'Desai Family',
+                    'party_name': 'The Desai Family',
+                    'email': 'desai@email.com',
+                    'phone': '9876543001',
+                    'rsvp_code': 'DESAI001',
+                },
+                'members': [
+                    {'name': 'Rajesh Desai', 'relation': 'father', 'invited_mendhi': False, 'invited_vidhi': False, 'invited_wedding': True, 'invited_reception': True},
+                    {'name': 'Priya Desai', 'relation': 'mother', 'invited_mendhi': False, 'invited_vidhi': False, 'invited_wedding': True, 'invited_reception': True},
+                    {'name': 'Arjun Desai', 'relation': 'son', 'invited_mendhi': True, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
+                    {'name': 'Vikram Desai', 'relation': 'son', 'invited_mendhi': True, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
+                    {'name': 'Ananya Desai', 'relation': 'daughter', 'invited_mendhi': True, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
+                ]
+            },
+            {
+                'family': {
+                    'name': 'Patel Family',
+                    'party_name': 'The Patel Family',
+                    'email': 'patel@email.com',
+                    'phone': '9876543002',
+                    'rsvp_code': 'PATEL001',
+                },
+                'members': [
+                    {'name': 'Suresh Patel', 'relation': 'father', 'invited_mendhi': True, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
+                    {'name': 'Meena Patel', 'relation': 'mother', 'invited_mendhi': True, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
+                    {'name': 'Rohan Patel', 'relation': 'son', 'invited_mendhi': True, 'invited_vidhi': False, 'invited_wedding': True, 'invited_reception': True},
+                    {'name': 'Kavya Patel', 'relation': 'daughter', 'invited_mendhi': True, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
+                ]
+            },
+            {
+                'family': {
+                    'name': 'Sharma Family',
+                    'party_name': 'The Sharma Family',
+                    'email': 'sharma@email.com',
+                    'phone': '9876543003',
+                    'rsvp_code': 'SHARMA01',
+                },
+                'members': [
+                    {'name': 'Anil Sharma', 'relation': 'father', 'invited_mendhi': False, 'invited_vidhi': False, 'invited_wedding': True, 'invited_reception': True},
+                    {'name': 'Sunita Sharma', 'relation': 'mother', 'invited_mendhi': True, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
+                    {'name': 'Amit Sharma', 'relation': 'son', 'invited_mendhi': False, 'invited_vidhi': False, 'invited_wedding': True, 'invited_reception': False},
+                    {'name': 'Neha Sharma', 'relation': 'daughter', 'invited_mendhi': True, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
+                    {'name': 'Pooja Sharma', 'relation': 'daughter', 'invited_mendhi': True, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
+                    {'name': 'Dadaji Sharma', 'relation': 'grandfather', 'invited_mendhi': False, 'invited_vidhi': False, 'invited_wedding': True, 'invited_reception': True},
+                ]
+            },
+            {
+                'family': {
+                    'name': 'Mehta Family',
+                    'party_name': 'The Mehta Family',
+                    'email': 'mehta@email.com',
+                    'phone': '9876543004',
+                    'rsvp_code': 'MEHTA001',
+                },
+                'members': [
+                    {'name': 'Dinesh Mehta', 'relation': 'father', 'invited_mendhi': True, 'invited_vidhi': False, 'invited_wedding': True, 'invited_reception': True},
+                    {'name': 'Rekha Mehta', 'relation': 'mother', 'invited_mendhi': True, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
+                    {'name': 'Karan Mehta', 'relation': 'son', 'invited_mendhi': True, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
+                ]
+            },
+            {
+                'family': {
+                    'name': 'Singh Family',
+                    'party_name': 'The Singh Family',
+                    'email': 'singh@email.com',
+                    'phone': '9876543005',
+                    'rsvp_code': 'SINGH001',
+                },
+                'members': [
+                    {'name': 'Harpreet Singh', 'relation': 'father', 'invited_mendhi': False, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
+                    {'name': 'Gurpreet Singh', 'relation': 'mother', 'invited_mendhi': True, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
+                    {'name': 'Jasmine Singh', 'relation': 'daughter', 'invited_mendhi': True, 'invited_vidhi': True, 'invited_wedding': True, 'invited_reception': True},
+                    {'name': 'Manpreet Singh', 'relation': 'son', 'invited_mendhi': True, 'invited_vidhi': False, 'invited_wedding': True, 'invited_reception': True},
+                    {'name': 'Dadi Singh', 'relation': 'grandmother', 'invited_mendhi': False, 'invited_vidhi': False, 'invited_wedding': True, 'invited_reception': True},
+                ]
+            },
         ]
         
-        for data in guests_data:
-            Guest.objects.create(**data)
-            events = []
-            if data['invited_mendhi']: events.append('M')
-            if data['invited_vidhi']: events.append('V')
-            if data['invited_wedding']: events.append('W')
-            if data['invited_reception']: events.append('R')
-            self.stdout.write(f"Created: {data['name']} ({data['rsvp_code']}) - Events: {', '.join(events)}")
+        for family_data in families_data:
+            # Create the family (Guest)
+            family = Guest.objects.create(
+                name=family_data['family']['name'],
+                party_name=family_data['family']['party_name'],
+                email=family_data['family']['email'],
+                phone=family_data['family']['phone'],
+                rsvp_code=family_data['family']['rsvp_code'],
+                max_guests=len(family_data['members']),
+            )
+            
+            self.stdout.write(f"\nCreated family: {family.party_name} (Code: {family.rsvp_code})")
+            
+            # Create members
+            for i, member_data in enumerate(family_data['members']):
+                member = FamilyMember.objects.create(
+                    family=family,
+                    name=member_data['name'],
+                    relation=member_data['relation'],
+                    invited_mendhi=member_data['invited_mendhi'],
+                    invited_vidhi=member_data['invited_vidhi'],
+                    invited_wedding=member_data['invited_wedding'],
+                    invited_reception=member_data['invited_reception'],
+                    order=i,
+                )
+                events = []
+                if member.invited_mendhi: events.append('M')
+                if member.invited_vidhi: events.append('V')
+                if member.invited_wedding: events.append('W')
+                if member.invited_reception: events.append('R')
+                self.stdout.write(f"  - {member.name} ({member.get_relation_display()}): {', '.join(events)}")
         
-        self.stdout.write(self.style.SUCCESS(f'Guest setup complete! Total: {Guest.objects.count()} guests'))
+        self.stdout.write(self.style.SUCCESS(f'\nSetup complete! Created {Guest.objects.count()} families with {FamilyMember.objects.count()} total members'))

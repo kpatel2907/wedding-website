@@ -8,7 +8,7 @@ from django.db.models import Count, Q, Sum
 from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
-from .models import Event, StoryMilestone, WeddingInfo, Guest
+from .models import Event, StoryMilestone, WeddingInfo, Guest, FamilyMember
 from .forms import RSVPCodeForm, GuestRSVPForm, ForgotCodeForm
 import csv
 import json
@@ -212,9 +212,12 @@ def forgot_code_sent(request):
 
 
 def rsvp_form(request, rsvp_code):
-    """Private RSVP form for a specific guest"""
-    # Get the guest by RSVP code
-    guest = get_object_or_404(Guest, rsvp_code=rsvp_code.upper())
+    """Private RSVP form for a family with individual members"""
+    # Get the family by RSVP code
+    family = get_object_or_404(Guest, rsvp_code=rsvp_code.upper())
+    
+    # Get family members
+    members = family.members.all().order_by('order', 'name')
     
     # Get events for display
     events = Event.objects.all()
@@ -236,58 +239,46 @@ def rsvp_form(request, rsvp_code):
     # Default event details if no events in database
     if not event_details:
         event_details = {
-            'mendhi': {'name': 'Mendhi', 'icon': '✿', 'date': 'December 25, 2025', 'time': '4:00 PM onwards', 'venue_name': 'The Garden Pavilion', 'venue_address': '123 Celebration Lane, Mumbai'},
-            'vidhi': {'name': 'Vidhi', 'icon': '🪔', 'date': 'December 26, 2025', 'time': '10:00 AM - 2:00 PM', 'venue_name': 'Family Residence', 'venue_address': '456 Heritage Road, Mumbai'},
-            'wedding': {'name': 'Wedding', 'icon': '💒', 'date': 'December 27, 2025', 'time': '6:00 PM onwards', 'venue_name': 'The Grand Ballroom', 'venue_address': '789 Royal Palace Hotel, Mumbai'},
-            'reception': {'name': 'Reception', 'icon': '🎉', 'date': 'December 28, 2025', 'time': '7:00 PM onwards', 'venue_name': 'Starlight Terrace', 'venue_address': '789 Royal Palace Hotel, Mumbai'},
+            'mendhi': {'name': 'Mendhi', 'icon': '✿', 'date': 'December 25, 2025', 'time': '4:00 PM onwards', 'venue_name': 'The Garden Pavilion', 'venue_address': '123 Celebration Lane, Mumbai', 'dress_code': 'Colorful Indian Attire'},
+            'vidhi': {'name': 'Vidhi', 'icon': '🪔', 'date': 'December 26, 2025', 'time': '10:00 AM - 2:00 PM', 'venue_name': 'Family Residence', 'venue_address': '456 Heritage Road, Mumbai', 'dress_code': 'Traditional Indian Wear'},
+            'wedding': {'name': 'Wedding', 'icon': '💒', 'date': 'December 27, 2025', 'time': '6:00 PM onwards', 'venue_name': 'The Grand Ballroom', 'venue_address': '789 Royal Palace Hotel, Mumbai', 'dress_code': 'Formal Indian Attire'},
+            'reception': {'name': 'Reception', 'icon': '🎉', 'date': 'December 28, 2025', 'time': '7:00 PM onwards', 'venue_name': 'Starlight Terrace', 'venue_address': '789 Royal Palace Hotel, Mumbai', 'dress_code': 'Semi-formal'},
         }
     
     rsvp_success = False
     
     if request.method == 'POST':
-        # Process RSVP directly from POST data
+        # Process RSVP for each family member
         try:
-            # Update RSVP for each event the guest is invited to
-            if guest.invited_mendhi:
-                rsvp_mendhi = request.POST.get('rsvp_mendhi', 'pending')
-                guest.rsvp_mendhi = rsvp_mendhi
-                if rsvp_mendhi == 'attending':
-                    guest.guests_mendhi = int(request.POST.get('guests_mendhi', 1) or 1)
-                else:
-                    guest.guests_mendhi = 0
+            for member in members:
+                member_id = str(member.id)
+                
+                # Update RSVP for each event the member is invited to
+                if member.invited_mendhi:
+                    rsvp_value = request.POST.get(f'rsvp_mendhi_{member_id}', 'pending')
+                    member.rsvp_mendhi = rsvp_value
+                
+                if member.invited_vidhi:
+                    rsvp_value = request.POST.get(f'rsvp_vidhi_{member_id}', 'pending')
+                    member.rsvp_vidhi = rsvp_value
+                
+                if member.invited_wedding:
+                    rsvp_value = request.POST.get(f'rsvp_wedding_{member_id}', 'pending')
+                    member.rsvp_wedding = rsvp_value
+                
+                if member.invited_reception:
+                    rsvp_value = request.POST.get(f'rsvp_reception_{member_id}', 'pending')
+                    member.rsvp_reception = rsvp_value
+                
+                # Update dietary requirements
+                member.dietary_requirements = request.POST.get(f'dietary_{member_id}', '')
+                member.save()
             
-            if guest.invited_vidhi:
-                rsvp_vidhi = request.POST.get('rsvp_vidhi', 'pending')
-                guest.rsvp_vidhi = rsvp_vidhi
-                if rsvp_vidhi == 'attending':
-                    guest.guests_vidhi = int(request.POST.get('guests_vidhi', 1) or 1)
-                else:
-                    guest.guests_vidhi = 0
-            
-            if guest.invited_wedding:
-                rsvp_wedding = request.POST.get('rsvp_wedding', 'pending')
-                guest.rsvp_wedding = rsvp_wedding
-                if rsvp_wedding == 'attending':
-                    guest.guests_wedding = int(request.POST.get('guests_wedding', 1) or 1)
-                else:
-                    guest.guests_wedding = 0
-            
-            if guest.invited_reception:
-                rsvp_reception = request.POST.get('rsvp_reception', 'pending')
-                guest.rsvp_reception = rsvp_reception
-                if rsvp_reception == 'attending':
-                    guest.guests_reception = int(request.POST.get('guests_reception', 1) or 1)
-                else:
-                    guest.guests_reception = 0
-            
-            # Update additional info
-            guest.dietary_requirements = request.POST.get('dietary_requirements', '')
-            guest.message = request.POST.get('message', '')
-            
-            # Mark as responded
-            guest.has_responded = True
-            guest.rsvp_submitted_at = timezone.now()
-            guest.save()
+            # Update family message
+            family.message = request.POST.get('message', '')
+            family.has_responded = True
+            family.rsvp_submitted_at = timezone.now()
+            family.save()
             
             rsvp_success = True
         except Exception as e:
@@ -301,8 +292,19 @@ def rsvp_form(request, rsvp_code):
             'partner2_name': 'Khushboo',
         }
     
+    # Organize members by event for display
+    events_with_members = {
+        'mendhi': {'details': event_details.get('mendhi', {}), 'members': [m for m in members if m.invited_mendhi]},
+        'vidhi': {'details': event_details.get('vidhi', {}), 'members': [m for m in members if m.invited_vidhi]},
+        'wedding': {'details': event_details.get('wedding', {}), 'members': [m for m in members if m.invited_wedding]},
+        'reception': {'details': event_details.get('reception', {}), 'members': [m for m in members if m.invited_reception]},
+    }
+    
     context = {
-        'guest': guest,
+        'family': family,
+        'guest': family,  # Keep for backward compatibility
+        'members': members,
+        'events_with_members': events_with_members,
         'event_details': event_details,
         'rsvp_success': rsvp_success,
         'wedding_info': wedding_info,
